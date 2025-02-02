@@ -4,8 +4,8 @@ import { Timestamp } from "firebase-admin/firestore";
 
 type UserWithIdParameters = UserParameters & { id?: string, createdAt: Timestamp };
 
-export class FirebaseDbUser {
-    public static EMPTY_USER: FirebaseDbUser = new FirebaseDbUser({
+export class FirebaseUser {
+    public static EMPTY_USER: FirebaseUser = new FirebaseUser({
         email: "",
         id: "",
         firstname: "",

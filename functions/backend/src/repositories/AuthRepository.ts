@@ -2,7 +2,7 @@ import { getDatabaseInstance } from "../database";
 import { CollectionReference, QueryDocumentSnapshot } from "firebase-admin/firestore";
 
 import { User } from "@/models/User";
-import { FirebaseDbUser } from "@/models/FirebaseDbUser";
+import { FirebaseUser } from "@/models/Firebase/FirebaseUser";
 import { DATABASE_CONSTANTS } from "@/constants/databaseConstants";
 
 const firestoreUserConverter = {
@@ -10,7 +10,7 @@ const firestoreUserConverter = {
         return Object.assign({}, user);
     },
     fromFirestore: function(snapshot: QueryDocumentSnapshot) {
-        const data = snapshot.data() as FirebaseDbUser;
+        const data = snapshot.data() as FirebaseUser;
         return new User({ ...data, createdAt: data.createdAt.toDate() });
     }
 };
@@ -18,7 +18,7 @@ const firestoreUserConverter = {
 function getUserTable() {
     try {
         const databaseInstance = getDatabaseInstance();
-        return databaseInstance.collection(DATABASE_CONSTANTS.USERS_TABLE).withConverter(firestoreUserConverter) as CollectionReference<User, FirebaseDbUser>;
+        return databaseInstance.collection(DATABASE_CONSTANTS.USERS_TABLE).withConverter(firestoreUserConverter) as CollectionReference<User, FirebaseUser>;
     } catch (error) {
         throw error;
     }
@@ -39,14 +39,14 @@ async function findUserRecord(userId: string) {
         const usersTable = getUserTable();
         const userSnapshot = await usersTable.where("id", "==", userId).get();
         if (!userSnapshot.empty) {
-            let user: QueryDocumentSnapshot<User, FirebaseDbUser> | null = null;
+            let user: QueryDocumentSnapshot<User, FirebaseUser> | null = null;
             userSnapshot.forEach((userData) => {
                 user = userData;
             });
 
             if (!user) return null;
 
-            return user as QueryDocumentSnapshot<User, FirebaseDbUser> | null;
+            return user as QueryDocumentSnapshot<User, FirebaseUser> | null;
         } else {
             return null;
         }

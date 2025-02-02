@@ -30,4 +30,7 @@ export const APP_FIREBASE_SERVICE_AUTH_PROVIDER_X509_CERT_URL = String(process.e
 export const APP_FIREBASE_SERVICE_CLIENT_X509_CERT_URL = String(process.env.APP_FIREBASE_SERVICE_CLIENT_X509_CERT_URL) || "";
 export const APP_FIREBASE_SERVICE_UNIVERSE_DOMAIN = String(process.env.APP_FIREBASE_SERVICE_UNIVERSE_DOMAIN) || "";
 
+export const TWILIO_SID = String(process.env.TWILIO_SID) || "";
+export const TWILIO_AUTH_TOKEN = String(process.env.TWILIO_AUTH_TOKEN) || "";
+
 export const OPENAI_API_KEY = String(process.env.OPENAI_API_KEY) || "";
