@@ -36,5 +36,18 @@
     "twilio": "^5.4.3",
     "uuid": "^11.0.5",
     "zod": "^3.24.1"
+  },
+  "_moduleAliases": {
+    "@/utils": "dist/utils",
+    "@/middlewares": "dist/middlewares",
+    "@/models": "dist/models",
+    "@/exceptions": "dist/exceptions",
+    "@/controllers": "dist/controllers",
+    "@/constants": "dist/constants",
+    "@/services": "dist/services",
+    "@/repositories": "dist/repositories",
+    "@/routers": "dist/routers",
+    "@/configs": "dist/configs",
+    "@/errors": "dist/errors"
   }
 }

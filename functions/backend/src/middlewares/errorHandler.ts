@@ -6,6 +6,7 @@ import { AppValidationError } from "@/errors/AppValidationError";
 import { FirebaseAuthError } from "firebase-admin/auth";
 
 export const errorHandler: ErrorRequestHandler = (error, request, response, next) => {
+    logging.log(error.message, "Hello");
     if (error instanceof FirebaseError) {
         logging.log(error.code, error.message);
         if (error.code.includes("email-already-in-use")) {
