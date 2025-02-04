@@ -83,6 +83,7 @@ async function getGoal(goalId: string): Promise<Goal | null> {
 
 async function createGoal(goalData: Goal): Promise<Goal | null> {
     try {
+        goalData = { ...goalData, ...normalizeDates(goalData) }
         const goalsTable = getGoalTable();
         const goal = await goalsTable.add(goalData);
         const addedGoal = await goal.get();
@@ -154,7 +155,7 @@ async function updateGoal(goalId: string, goalData: Partial<Goal>): Promise<Goal
 async function getActiveGoals(userId: string): Promise<Goal[]> {
     try {
         const goalsTable = getGoalTable();
-        const goalsSnapshot = await goalsTable.where("userId", "==", userId).where("endDate", ">=", Timestamp.fromDate(new Date())).where("status", "==", GoalStatus.ACTIVE).get();
+        const goalsSnapshot = await goalsTable.where("userId", "==", userId).where("status", "==", GoalStatus.ACTIVE).get();
         if (!goalsSnapshot.empty) {
             let goal: Goal[] = [];
             goalsSnapshot.forEach((goalData) => {

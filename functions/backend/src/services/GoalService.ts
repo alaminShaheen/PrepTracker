@@ -6,8 +6,9 @@ import { v4 as uuidv4 } from "uuid";
 import { GoalRepository } from "@/repositories/GoalRepository";
 import { CreateGoalRequestDto } from "@/models/dtos/CreateGoalRequestDto";
 import { UpdateGoalRequestDto } from "@/models/dtos/UpdateGoalRequestDto";
-import { addDays, addWeeks, differenceInCalendarDays, format, isAfter, isTomorrow, startOfDay } from "date-fns";
-import { UpcomingGoalsResponseDto } from "@/models/dtos/UpcomingGoalsResponseDto";
+import { addDays, differenceInCalendarDays, format, isAfter, isBefore, min, parse } from "date-fns";
+import { APP_CONSTANTS } from "@/constants/appConstants";
+import { doRangesOverlap, isDateInBetweenRange } from "@/utils/dateUtils";
 
 async function createGoal(goal: CreateGoalRequestDto, userId: string) {
     try {
@@ -18,22 +19,30 @@ async function createGoal(goal: CreateGoalRequestDto, userId: string) {
 
             for (let i = 0; i <= totalDays; i++) {
                 const currentDate = addDays(new Date(startDate), i);
-                const dateString = format(currentDate, "yyyy-MM-dd");
+                const dateString = format(currentDate, APP_CONSTANTS.DATE_FORMAT);
                 goalProgress[dateString] = false;
             }
         } else if (goal.goalType === GoalType.WEEKLY) {
-            let currentWeek = startOfDay(startDate);
-
-            while (isAfter(currentWeek, endDate)) {
-                const weekKey = format(currentWeek, "yyyy-ww");
+            let currentWeekStart = startDate;
+            while (isAfter(endDate, currentWeekStart)) {
+                const currentWeekEnd = min([addDays(currentWeekStart, 6), endDate]);
+                const weekKey = `${format(currentWeekStart, APP_CONSTANTS.DATE_FORMAT)} ${format(currentWeekEnd, APP_CONSTANTS.DATE_FORMAT)}`;
                 goalProgress[weekKey] = false;
-                currentWeek = addWeeks(currentWeek, 1);
+                currentWeekStart = addDays(currentWeekStart, 7);
             }
         } else {
-            const dateString = format(startDate, "yyyy-MM-dd");
+            const dateString = format(startDate, APP_CONSTANTS.DATE_FORMAT);
             goalProgress[dateString] = false;
         }
-        const newGoal = new Goal({...goal, id: uuidv4(), progress: goalProgress, updatedAt: new Date(), createdAt: new Date(), userId, status: GoalStatus.ACTIVE})
+        const newGoal = new Goal({
+            ...goal,
+            id: uuidv4(),
+            progress: goalProgress,
+            updatedAt: new Date(),
+            createdAt: new Date(),
+            userId,
+            status: GoalStatus.ACTIVE
+        });
         return await GoalRepository.createGoal(newGoal);
     } catch (error) {
         throw error;
@@ -104,23 +113,67 @@ async function getGoal(goalId: string, userId: string) {
 
 async function getActiveGoals(userId: string): Promise<Goal[]> {
     try {
-        return await GoalRepository.getActiveGoals(userId);
+        const activeGoals = await GoalRepository.getActiveGoals(userId);
+        return activeGoals.filter(activeGoal => {
+            if (activeGoal.goalType === GoalType.DAILY || activeGoal.goalType === GoalType.ONE_TIME) {
+                return Object.keys(activeGoal.progress).find(dateKey => dateKey === format(new Date(), APP_CONSTANTS.DATE_FORMAT));
+            } else {
+                return Object.keys(activeGoal.progress).find(dateKey => {
+                    const [weekStartKey, weekEndKey] = dateKey.split(" ");
+                    const weekStartDate = parse(weekStartKey, APP_CONSTANTS.DATE_FORMAT, new Date());
+                    const weekEndDate = parse(weekEndKey, APP_CONSTANTS.DATE_FORMAT, new Date());
+                    return isDateInBetweenRange(weekStartDate, weekEndDate, new Date());
+                });
+            }
+        })
     } catch (error: any) {
         throw error;
     }
 }
 
-async function getUpcomingGoals(userId: string): Promise<UpcomingGoalsResponseDto> {
+async function getTomorrowGoals(userId: string): Promise<Goal[]> {
     try {
-        const rawUpcomingGoals = await GoalRepository.getUpcomingGoals(userId);
-        return rawUpcomingGoals.reduce((upcomingGoals, currentGoal) => {
-            if (isTomorrow(currentGoal.startDate)) {
-                upcomingGoals.tomorrow.push(currentGoal);
-            } else if (differenceInCalendarDays(currentGoal.startDate, new Date()) <= 7) {
-                upcomingGoals.nextSevenDays.push(currentGoal);
+        const activeGoals = await GoalRepository.getActiveGoals(userId);
+        const tomorrowDate = addDays(new Date(), 1);
+        return activeGoals.filter(activeGoal => {
+            if (activeGoal.goalType === GoalType.DAILY || activeGoal.goalType === GoalType.ONE_TIME) {
+                return Object.keys(activeGoal.progress).find(dateKey => dateKey === format(tomorrowDate, APP_CONSTANTS.DATE_FORMAT));
+            } else {
+                return Object.keys(activeGoal.progress).find(dateKey => {
+                    const [weekStartKey, weekEndKey] = dateKey.split(" ");
+                    const weekStartDate = parse(weekStartKey, APP_CONSTANTS.DATE_FORMAT, new Date());
+                    const weekEndDate = parse(weekEndKey, APP_CONSTANTS.DATE_FORMAT, new Date());
+                    return isDateInBetweenRange(weekStartDate, weekEndDate, tomorrowDate);
+                });
             }
-            return upcomingGoals;
-        }, {nextSevenDays: [], tomorrow: []} as UpcomingGoalsResponseDto)
+        });
+    } catch (error: any) {
+        throw error;
+    }
+}
+
+async function next7DayGoals(userId: string): Promise<Goal[]> {
+    try {
+        const activeGoals = await GoalRepository.getActiveGoals(userId);
+        const next7Days = Array.from({ length: 7 }, (_, i) => addDays(new Date(), i + 1));
+        const next7StartDate = addDays(new Date(), 1);
+        const next7EndDate = addDays(next7StartDate, 6);
+
+        return activeGoals.filter(activeGoal => {
+            if (activeGoal.goalType === GoalType.DAILY || activeGoal.goalType === GoalType.ONE_TIME) {
+                return Object.keys(activeGoal.progress).find(dateKey => {
+                    const date = parse(dateKey, APP_CONSTANTS.DATE_FORMAT, new Date());
+                    return isDateInBetweenRange(next7StartDate, next7EndDate, date);
+                });
+            } else {
+                return Object.keys(activeGoal.progress).find(dateKey => {
+                    const [weekStartKey, weekEndKey] = dateKey.split(" ");
+                    const weekStartDate = parse(weekStartKey, APP_CONSTANTS.DATE_FORMAT, new Date());
+                    const weekEndDate = parse(weekEndKey, APP_CONSTANTS.DATE_FORMAT, new Date());
+                    return next7Days.find(day => isDateInBetweenRange(weekStartDate, weekEndDate, day))
+                });
+            }
+        });
     } catch (error: any) {
         throw error;
     }
@@ -132,5 +185,6 @@ export const GoalService = {
     deleteGoal,
     updateGoal,
     getActiveGoals,
-    getUpcomingGoals
+    getTomorrowGoals,
+    next7DayGoals,
 };

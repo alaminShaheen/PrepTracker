@@ -12,7 +12,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!appLoading) {
-      redirect(authenticated ? ROUTES.DASHBOARD : ROUTES.LOGIN,);
+      redirect(authenticated ? ROUTES.DASHBOARD.ROOT : ROUTES.LOGIN,);
     }
   }, [authenticated, appLoading]);
 

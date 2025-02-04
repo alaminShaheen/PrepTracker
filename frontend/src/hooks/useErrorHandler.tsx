@@ -1,3 +1,5 @@
+"use client"
+
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { useCallback } from "react";

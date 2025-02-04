@@ -1,29 +1,30 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import { format } from "date-fns";
-import { Dot } from "lucide-react";
-import { useFetchActiveGoals } from "@/hooks/queries/useFetchActiveGoals";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { GoalType } from "@/models/enums/GoalType";
-import Goal from "@/components/Goal";
-import { Goal as GoalModel } from "@/models/Goal";
-import { getGoalDateKey, toastDateFormat } from "@/lib/utils";
 import { useUpdateGoal } from "@/hooks/mutations/useUpdateGoal";
 import { toast } from "sonner";
+import { getGoalDateKey, toastDateFormat } from "@/lib/utils";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { useFetchTomorrowGoals } from "@/hooks/queries/useFetchTomorrowGoals";
+import { Goal as GoalModel } from "@/models/Goal";
 import GoalsSectionSkeleton from "@/components/GoalsSectionSkeleton";
+import { addDays, format } from "date-fns";
+import { Dot } from "lucide-react";
+import { GoalType } from "@/models/enums/GoalType";
+import Goal from "@/components/Goal";
+import { APP_CONSTANTS } from "@/constants/AppConstants";
 import { useDeleteGoal } from "@/hooks/mutations/useDeleteGoal";
 import { Dialog } from "@/components/ui/dialog";
-import EditGoalModal from "@/components/EditGoalModal";
 
-const Dashboard = () => {
+const Tomorrow = () => {
     const [goalToEdit, setGoalToEdit] = useState<GoalModel>();
     const {
-        data: activeGoals,
-        isLoading: isFetchingActiveGoals,
-        error: fetchActiveGoalsError,
-        isError: isFetchActiveGoalsError
-    } = useFetchActiveGoals({ enabled: true });
+        data: tomorrowGoals,
+        isLoading: isFetchingTomorrowGoals,
+        error: fetchTomorrowGoalsError,
+        isError: isFetchTomorrowGoalsError
+    } = useFetchTomorrowGoals({ enabled: true });
+
     const {
         isPending: isUpdatingGoal,
         isError: isUpdatingGoalsError,
@@ -31,7 +32,6 @@ const Dashboard = () => {
         mutate: updateGoal
     } = useUpdateGoal({
         onSuccess: () => {
-            setGoalToEdit(undefined);
             toast.success("Goal updated successfully.", {
                 richColors: true,
                 description: toastDateFormat(new Date())
@@ -55,24 +55,24 @@ const Dashboard = () => {
 
     const { handleErrors } = useErrorHandler();
 
-    useEffect(() => {
-        if (isFetchActiveGoalsError) {
-            handleErrors(fetchActiveGoalsError);
-        } else if (isUpdatingGoalsError) {
-            handleErrors(updatingGoalsError);
-        } else if (isDeletingGoalsError) {
-            handleErrors(deletingGoalsError);
-        }
-    }, [isFetchActiveGoalsError, handleErrors, isDeletingGoalsError, fetchActiveGoalsError, updatingGoalsError, isUpdatingGoalsError, deletingGoalsError]);
-
     const toggleGoal = useCallback((goal: GoalModel) => {
-        if (isFetchingActiveGoals || isUpdatingGoal) {
+        if (isFetchingTomorrowGoals || isUpdatingGoal) {
             return;
         }
         const dateKey = getGoalDateKey(goal);
         goal.progress[dateKey] = !goal.progress[dateKey];
         updateGoal(goal);
-    }, [updateGoal, isFetchingActiveGoals, isUpdatingGoal]);
+    }, [updateGoal, isFetchingTomorrowGoals, isUpdatingGoal]);
+
+    useEffect(() => {
+        if (isFetchTomorrowGoalsError) {
+            handleErrors(fetchTomorrowGoalsError);
+        } else if (isUpdatingGoalsError) {
+            handleErrors(updatingGoalsError);
+        } else if (isDeletingGoalsError) {
+            handleErrors(deletingGoalsError);
+        }
+    }, [isDeletingGoal, deletingGoalsError, isFetchTomorrowGoalsError, handleErrors, fetchTomorrowGoalsError, updatingGoalsError, isUpdatingGoalsError]);
 
     const onDeleteGoal = useCallback((goalId: string) => {
         deleteGoal(goalId);
@@ -83,7 +83,7 @@ const Dashboard = () => {
     }, []);
 
 
-    if (isFetchingActiveGoals || isDeletingGoal) {
+    if (isFetchingTomorrowGoals || isDeletingGoal) {
         return (
             <div className="gap-4 w-2/3 mx-auto py-16">
                 <GoalsSectionSkeleton />
@@ -93,22 +93,15 @@ const Dashboard = () => {
 
     return (
         <Dialog open={!!goalToEdit} onOpenChange={() => setGoalToEdit(prev => prev ? undefined : prev)}>
-            {
-                !!goalToEdit &&
-                <EditGoalModal
-                    data={goalToEdit}
-                    onEditGoal={(goalData) => updateGoal({ ...goalToEdit, ...goalData })}
-                />
-            }
             <div className="gap-4 w-2/3 mx-auto py-16">
                 <h1 className="text-3xl font-bold">
-                    Today's goals
+                    Tomorrow's goals
                 </h1>
 
                 <div className="flex font-bold mt-8 text-lg">
-                    <span>{format(new Date(), "do MMMM yyyy")}</span>
+                    <span>{format(addDays(new Date(), 1), APP_CONSTANTS.DATE_FORMAT)}</span>
                     <Dot />
-                    <span>{format(new Date(), "EEEE")}</span>
+                    <span>{format(addDays(new Date(), 1), "EEEE")}</span>
                 </div>
 
                 <div className="flex font-bold mt-8 text-lg">
@@ -116,7 +109,7 @@ const Dashboard = () => {
                 </div>
                 <hr className="my-2" />
                 {
-                    activeGoals?.filter(goal => goal.goalType === GoalType.WEEKLY).map((goal) => (
+                    tomorrowGoals?.filter(goal => goal.goalType === GoalType.WEEKLY).map((goal) => (
                         <Goal
                             goal={goal}
                             key={goal.id}
@@ -133,7 +126,7 @@ const Dashboard = () => {
                 </div>
                 <hr className="my-2" />
                 {
-                    activeGoals?.filter(goal => goal.goalType === GoalType.DAILY).map((goal) => (
+                    tomorrowGoals?.filter(goal => goal.goalType === GoalType.DAILY).map((goal) => (
                         <Goal
                             goal={goal}
                             key={goal.id}
@@ -149,7 +142,7 @@ const Dashboard = () => {
                 </div>
                 <hr className="my-2" />
                 {
-                    activeGoals?.filter(goal => goal.goalType === GoalType.WEEKLY).map((goal) => (
+                    tomorrowGoals?.filter(goal => goal.goalType === GoalType.WEEKLY).map((goal) => (
                         <Goal
                             goal={goal}
                             key={goal.id}
@@ -164,4 +157,4 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+export default Tomorrow;
