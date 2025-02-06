@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { GoalType } from "@/models/enums/GoalType";
-import { addDays, Day, format, getDay, isAfter, isBefore, startOfWeek } from "date-fns";
+import { addDays, Day, format, getDay, isAfter, isBefore, isSameDay, startOfWeek } from "date-fns";
 import { APP_CONSTANTS } from "@/constants/AppConstants";
 import { Goal } from "@/models/Goal";
 
@@ -33,5 +33,5 @@ export function getGoalDateKey(goal: Goal) {
 }
 
 export function isDateInBetweenRange(startDate: Date, endDate: Date, referenceDate: Date) {
-    return isAfter(referenceDate, startDate) && isBefore(referenceDate, endDate);
+    return (isSameDay(referenceDate, startDate) || isAfter(referenceDate, startDate)) && (isSameDay(referenceDate, endDate) || isBefore(referenceDate, endDate));
 }

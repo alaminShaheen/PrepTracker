@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { GoalRepository } from "@/repositories/GoalRepository";
 import { CreateGoalRequestDto } from "@/models/dtos/CreateGoalRequestDto";
 import { UpdateGoalRequestDto } from "@/models/dtos/UpdateGoalRequestDto";
-import { addDays, differenceInCalendarDays, format, isAfter, isBefore, min, parse } from "date-fns";
+import { addDays, differenceInCalendarDays, format, isAfter, isBefore, isSameDay, min, parse } from "date-fns";
 import { APP_CONSTANTS } from "@/constants/appConstants";
 import { doRangesOverlap, isDateInBetweenRange } from "@/utils/dateUtils";
 
@@ -163,6 +163,7 @@ async function next7DayGoals(userId: string): Promise<Goal[]> {
             if (activeGoal.goalType === GoalType.DAILY || activeGoal.goalType === GoalType.ONE_TIME) {
                 return Object.keys(activeGoal.progress).find(dateKey => {
                     const date = parse(dateKey, APP_CONSTANTS.DATE_FORMAT, new Date());
+                    console.log(dateKey, format(next7StartDate, APP_CONSTANTS.DATE_FORMAT), format(next7EndDate, APP_CONSTANTS.DATE_FORMAT), isDateInBetweenRange(next7StartDate, next7EndDate, date));
                     return isDateInBetweenRange(next7StartDate, next7EndDate, date);
                 });
             } else {

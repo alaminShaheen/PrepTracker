@@ -9,9 +9,9 @@ const DashboardLayout = (props: DashboardLayoutProps) => {
     const { children } = props;
 
     return (
-        <div className="flex flex-1">
+        <div className="flex flex-1 h-[calc(100vh-20rem)]">
             <Sidebar />
-            <div className="flex justify-center flex-1 max-h-screen overflow-y-auto">
+            <div className="flex justify-center w-full h-full overflow-y-auto py-10">
                 {children}
             </div>
         </div>

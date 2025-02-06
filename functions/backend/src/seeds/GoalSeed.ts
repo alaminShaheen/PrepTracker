@@ -12,13 +12,15 @@ import {
     compareDesc, Day,
     differenceInCalendarDays,
     format, getDay,
-    isAfter, min, parse,
+    isAfter, isBefore, isEqual, min, parse,
     startOfDay, startOfWeek,
     subDays
 } from "date-fns";
 import { faker } from "@faker-js/faker";
 import { GoalStatus } from "@/models/enums/GoalStatus";
 import { APP_CONSTANTS } from "@/constants/appConstants";
+import { User } from "@/models/User";
+import { FirebaseUser } from "@/models/Firebase/FirebaseUser";
 
 
 const firestoreGoalConverter = {
@@ -37,8 +39,19 @@ const firestoreGoalConverter = {
     }
 };
 
+const firestoreUserConverter = {
+    toFirestore: function(user: User) {
+        return Object.assign({}, user);
+    },
+    fromFirestore: function(snapshot: QueryDocumentSnapshot) {
+        const data = snapshot.data() as FirebaseUser;
+        return new User({ ...data, createdAt: data.createdAt.toDate() });
+    }
+};
+
 const databaseInstance = getDatabaseInstance();
 const goalsTable = databaseInstance.collection(DATABASE_CONSTANTS.GOALS_TABLE).withConverter(firestoreGoalConverter) as CollectionReference<Goal, FirebaseGoal>;
+const usersTable = databaseInstance.collection(DATABASE_CONSTANTS.USERS_TABLE).withConverter(firestoreUserConverter) as CollectionReference<User, FirebaseUser>;
 
     // generate completed daily goals
     // generate failed daily goals
@@ -218,6 +231,36 @@ async function seedDatabase() {
     }
 }
 
+async function cleanDatabase() {
+    try {
+        const batch = databaseInstance.batch();
+        // const usersSnapshot = await usersTable.get();
+        // const users: User[] = [];
+        //
+        // if (!usersSnapshot.empty) {
+        //     usersSnapshot.forEach(userDoc => {
+        //         users.push(userDoc.data());
+        //     });
+        // }
+
+        const goalsSnapshot = await goalsTable.get();
+        if (!goalsSnapshot.empty) {
+            goalsSnapshot.forEach((goalDoc) => {
+                const goalData = goalDoc.data();
+                if (
+                    goalData.status !== GoalStatus.ACTIVE ||
+                    isBefore(format(goalData.endDate, APP_CONSTANTS.DATE_FORMAT), new Date())
+                ) {
+                    batch.delete(goalDoc.ref);
+                }
+            });
+            await batch.commit();
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 async function batchUpdateGoals() {
     try {
@@ -239,5 +282,5 @@ async function batchUpdateGoals() {
 
 // void seedWeeklyGoals(6);
 // void seedDailyGoals(6);
-void seedOneTimeGoals(6);
+void cleanDatabase();
 // void batchUpdateGoals();

@@ -1,31 +1,63 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { GoalStatus } from "@/models/enums/GoalStatus";
-import { AlarmClock, CalendarPlus, Circle, CircleCheck, Pencil, Trash2 } from "lucide-react";
-import { cn, getGoalDateKey } from "@/lib/utils";
+import { AlarmClock, CalendarPlus, Circle, CircleCheck, Clock, Pencil, Trash2 } from "lucide-react";
+import { cn, isDateInBetweenRange } from "@/lib/utils";
 import { Goal as GoalModel } from "@/models/Goal";
-import { format } from "date-fns";
+import { addDays, format, parse } from "date-fns";
+import { GoalType } from "@/models/enums/GoalType";
+import { APP_CONSTANTS } from "@/constants/AppConstants";
+import { GoalTime } from "@/models/enums/GoalTime";
 
 type GoalProps = {
     goal: GoalModel;
-    onToggleGoal: (goal: GoalModel) => void;
+    onToggleGoal: (goal: GoalModel, dateKey: string) => void;
     onEditGoal: (goal: GoalModel) => void;
     onDeleteGoal: (goalId: string) => void;
+    type: GoalTime;
 }
 
 const Goal = (props: GoalProps) => {
-    const { onToggleGoal, goal, onEditGoal, onDeleteGoal } = props;
-    const dateKey = useMemo(() => getGoalDateKey(goal), [goal]);
+    const { onToggleGoal, goal, onEditGoal, onDeleteGoal, type } = props;
+
+    const dateKey = useMemo(() => {
+        if (type !== GoalTime.TODAY && goal.goalType !== GoalType.WEEKLY) return "";
+
+        if (goal.goalType === GoalType.ONE_TIME || goal.goalType === GoalType.DAILY) {
+            return format(new Date(), APP_CONSTANTS.DATE_FORMAT);
+        } else {
+            const referenceDate = type === GoalTime.TODAY ? new Date() : type === GoalTime.TOMORROW ? addDays(new Date(), 1) : Array.from({ length: 7 }, (_, index) => addDays(new Date(), index + 1));
+            return Object.keys(goal.progress).find((dateRange) => {
+                const [weekStart, weekEnd] = dateRange.split(" ").map(key => parse(key, APP_CONSTANTS.DATE_FORMAT, new Date()));
+                if (Array.isArray(referenceDate)) {
+                    return referenceDate.find(date => isDateInBetweenRange(weekStart, weekEnd, date));
+                } else return isDateInBetweenRange(weekStart, weekEnd, referenceDate);
+            }) || "";
+        }
+    }, [goal, type]);
+
+    const onTogglePressed = useCallback(() => {
+        if (type !== GoalTime.TODAY && goal.goalType !== GoalType.WEEKLY) return;
+        return onToggleGoal(goal, dateKey);
+    }, [type, goal, dateKey, onToggleGoal]);
 
     return (
-        <div className="group flex gap-2 items-center p-2 my-4 cursor-pointer hover:bg-secondary hover:rounded-md"
-             key={goal.id} onClick={() => onToggleGoal(goal)}>
-            <span>
-                {
-                    goal.progress[dateKey] ?
-                        <CircleCheck className="cursor-pointer size-6 text-green-600" /> :
-                        <Circle className="cursor-pointer size-6 text-primary" />
-                }
-            </span>
+        <div className={cn("group flex gap-2 items-center p-2 my-4", {
+            "hover:bg-secondary hover:rounded-md cursor-pointer": type === GoalTime.TODAY
+        })}
+             key={goal.id} onClick={onTogglePressed}>
+            {
+                type !== GoalTime.TODAY && goal.goalType !== GoalType.WEEKLY ?
+                    (<span><Clock className="cursor-not-allowed size-6 text-yellow-300" /></span>)
+                    :
+                    (<span>
+                    {
+                        goal.progress[dateKey] ?
+                            <CircleCheck className="cursor-pointer size-6 text-green-600" /> :
+                            <Circle className="cursor-pointer size-6 text-primary" />
+                    }
+                </span>)
+
+            }
             <div className="flex w-full items-center justify-between">
                 <div className="flex flex-col gap-2">
                     <span className={cn("flex", {
@@ -50,12 +82,12 @@ const Goal = (props: GoalProps) => {
                             size={14} /> {format(goal.endDate, "dd-MM-yyyy")}</span>
                     </span>
                 </div>
-                <div className="hidden group-hover:flex gap-4">
-                    <Trash2 size={18} className="text-destructive" onClick={(event) => {
+                <div className="flex gap-4">
+                    <Trash2 size={18} className="text-destructive cursor-pointer" onClick={(event) => {
                         event.stopPropagation();
                         onDeleteGoal(goal.id);
                     }} />
-                    <Pencil size={18} onClick={(event) => {
+                    <Pencil className="cursor-pointer" size={18} onClick={(event) => {
                         event.stopPropagation();
                         onEditGoal(goal);
                     }} />

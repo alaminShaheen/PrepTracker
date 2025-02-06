@@ -1,7 +1,7 @@
-import { isAfter, isBefore } from "date-fns";
+import { isAfter, isBefore, isEqual, isSameDay } from "date-fns";
 
 export function isDateInBetweenRange(startDate: Date, endDate: Date, referenceDate: Date) {
-    return isAfter(referenceDate, startDate) && isBefore(referenceDate, endDate);
+    return (isSameDay(referenceDate, startDate) || isAfter(referenceDate, startDate)) && (isSameDay(referenceDate, endDate) || isBefore(referenceDate, endDate));
 }
 
 export function doRangesOverlap(start1: Date, end1: Date, start2: Date, end2: Date) {

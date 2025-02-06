@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { format } from "date-fns";
 import { Dot } from "lucide-react";
 import { useFetchActiveGoals } from "@/hooks/queries/useFetchActiveGoals";
@@ -15,6 +15,7 @@ import GoalsSectionSkeleton from "@/components/GoalsSectionSkeleton";
 import { useDeleteGoal } from "@/hooks/mutations/useDeleteGoal";
 import { Dialog } from "@/components/ui/dialog";
 import EditGoalModal from "@/components/EditGoalModal";
+import { GoalTime } from "@/models/enums/GoalTime";
 
 const Dashboard = () => {
     const [goalToEdit, setGoalToEdit] = useState<GoalModel>();
@@ -65,11 +66,10 @@ const Dashboard = () => {
         }
     }, [isFetchActiveGoalsError, handleErrors, isDeletingGoalsError, fetchActiveGoalsError, updatingGoalsError, isUpdatingGoalsError, deletingGoalsError]);
 
-    const toggleGoal = useCallback((goal: GoalModel) => {
+    const toggleGoal = useCallback((goal: GoalModel, dateKey: string) => {
         if (isFetchingActiveGoals || isUpdatingGoal) {
             return;
         }
-        const dateKey = getGoalDateKey(goal);
         goal.progress[dateKey] = !goal.progress[dateKey];
         updateGoal(goal);
     }, [updateGoal, isFetchingActiveGoals, isUpdatingGoal]);
@@ -100,7 +100,7 @@ const Dashboard = () => {
                     onEditGoal={(goalData) => updateGoal({ ...goalToEdit, ...goalData })}
                 />
             }
-            <div className="gap-4 w-2/3 mx-auto py-16">
+            <div className="gap-4 w-2/3 mx-auto">
                 <h1 className="text-3xl font-bold">
                     Today's goals
                 </h1>
@@ -111,53 +111,70 @@ const Dashboard = () => {
                     <span>{format(new Date(), "EEEE")}</span>
                 </div>
 
-                <div className="flex font-bold mt-8 text-lg">
-                    One Time Goals
-                </div>
-                <hr className="my-2" />
                 {
-                    activeGoals?.filter(goal => goal.goalType === GoalType.WEEKLY).map((goal) => (
-                        <Goal
-                            goal={goal}
-                            key={goal.id}
-                            onToggleGoal={toggleGoal}
-                            onDeleteGoal={onDeleteGoal}
-                            onEditGoal={onEditGoal}
-                        />
-                    )) || <span>No one time goals today</span>
+                    (activeGoals || []).filter(goal => goal.goalType === GoalType.ONE_TIME).length > 0 &&
+                    <Fragment>
+                        <div className="flex font-bold mt-8 text-lg">
+                            One Time Goals
+                        </div>
+                        <hr className="my-2" />
+                        {
+                            (activeGoals || []).filter(goal => goal.goalType === GoalType.ONE_TIME).map((goal) => (
+                                <Goal
+                                    goal={goal}
+                                    key={goal.id}
+                                    onToggleGoal={toggleGoal}
+                                    onDeleteGoal={onDeleteGoal}
+                                    onEditGoal={onEditGoal}
+                                    type={GoalTime.TODAY}
+                                />
+                            ))
+                        }
+                    </Fragment>
                 }
 
-
-                <div className="flex font-bold mt-8 text-lg">
-                    Daily Goals
-                </div>
-                <hr className="my-2" />
                 {
-                    activeGoals?.filter(goal => goal.goalType === GoalType.DAILY).map((goal) => (
-                        <Goal
-                            goal={goal}
-                            key={goal.id}
-                            onToggleGoal={toggleGoal}
-                            onDeleteGoal={onDeleteGoal}
-                            onEditGoal={onEditGoal}
-                        />
-                    )) || <span>No daily goals today</span>
+                    (activeGoals || []).filter(goal => goal.goalType === GoalType.DAILY).length > 0 &&
+                    <Fragment>
+                        <div className="flex font-bold mt-8 text-lg">
+                            Daily Goals
+                        </div>
+                        <hr className="my-2" />
+                        {
+                            (activeGoals || []).filter(goal => goal.goalType === GoalType.DAILY).map((goal) => (
+                                <Goal
+                                    goal={goal}
+                                    key={goal.id}
+                                    onToggleGoal={toggleGoal}
+                                    onDeleteGoal={onDeleteGoal}
+                                    onEditGoal={onEditGoal}
+                                    type={GoalTime.TODAY}
+                                />
+                            ))
+                        }
+                    </Fragment>
                 }
 
-                <div className="flex font-bold mt-8 text-lg">
-                    Weekly Goals
-                </div>
-                <hr className="my-2" />
                 {
-                    activeGoals?.filter(goal => goal.goalType === GoalType.WEEKLY).map((goal) => (
-                        <Goal
-                            goal={goal}
-                            key={goal.id}
-                            onToggleGoal={toggleGoal}
-                            onDeleteGoal={onDeleteGoal}
-                            onEditGoal={onEditGoal}
-                        />
-                    )) || <span>No weekly goals today </span>
+                    (activeGoals || []).filter(goal => goal.goalType === GoalType.WEEKLY).length > 0 &&
+                    <Fragment>
+                        <div className="flex font-bold mt-8 text-lg">
+                            Weekly Goals
+                        </div>
+                        <hr className="my-2" />
+                        {
+                            (activeGoals || []).filter(goal => goal.goalType === GoalType.WEEKLY).map((goal) => (
+                                <Goal
+                                    goal={goal}
+                                    key={goal.id}
+                                    onToggleGoal={toggleGoal}
+                                    onDeleteGoal={onDeleteGoal}
+                                    onEditGoal={onEditGoal}
+                                    type={GoalTime.TODAY}
+                                />
+                            ))
+                        }
+                    </Fragment>
                 }
             </div>
         </Dialog>
