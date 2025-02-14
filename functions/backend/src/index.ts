@@ -73,7 +73,6 @@ export const sendDailyEmails = firebaseV2Functions.scheduler.onSchedule("every d
                 }
             }
         }
-        console.log("Emails sent successfully!");
     } catch (error) {
         console.error("Error sending emails:", error);
     }

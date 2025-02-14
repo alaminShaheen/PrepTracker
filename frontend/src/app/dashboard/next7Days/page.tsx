@@ -61,7 +61,6 @@ const Next7Days = () => {
         if (isFetchingGoals || isUpdatingGoal) {
             return;
         }
-        console.log(goal);
         goal.progress[dateKey] = !goal.progress[dateKey];
         updateGoal(goal);
     }, [updateGoal, isFetchingGoals, isUpdatingGoal]);

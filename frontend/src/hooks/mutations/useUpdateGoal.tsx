@@ -118,7 +118,6 @@ export const useUpdateGoal = (props: UseUpdateGoalProps) => {
             }
         },
         onError: (error) => {
-            console.log(error);
             handleErrors(new Error("There was an error updating the goal"));
         }
     });

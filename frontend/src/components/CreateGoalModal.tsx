@@ -35,6 +35,8 @@ const CreateGoalModal = (props: CreateGoalModalProps) => {
         onCreateGoal(formData);
     }, [onCreateGoal]);
 
+    const goalType = form.watch("goalType");
+
     return (
         <TooltipProvider>
             <DialogContent>
@@ -98,7 +100,7 @@ const CreateGoalModal = (props: CreateGoalModalProps) => {
                                                         One time goal
                                                     </FormLabel>
                                                     <Tooltip>
-                                                        <TooltipTrigger><Info size={18} /></TooltipTrigger>
+                                                        <TooltipTrigger type="button" onClick={e => e.preventDefault()}><Info size={18} /></TooltipTrigger>
                                                         <TooltipContent>
                                                             <p>Goal not repeated</p>
                                                         </TooltipContent>
@@ -112,7 +114,7 @@ const CreateGoalModal = (props: CreateGoalModalProps) => {
                                                         Weekly goal
                                                     </FormLabel>
                                                     <Tooltip>
-                                                        <TooltipTrigger><Info size={18} /></TooltipTrigger>
+                                                        <TooltipTrigger type="button" onClick={e => e.preventDefault()}><Info size={18} /></TooltipTrigger>
                                                         <TooltipContent>
                                                             <p>
                                                                 Repeated every 7 days starting from "Start date" until
@@ -130,7 +132,7 @@ const CreateGoalModal = (props: CreateGoalModalProps) => {
                                                         Daily goal
                                                     </FormLabel>
                                                     <Tooltip>
-                                                        <TooltipTrigger><Info size={18} /></TooltipTrigger>
+                                                        <TooltipTrigger type="button" onClick={e => e.preventDefault()}><Info size={18} /></TooltipTrigger>
                                                         <TooltipContent>
                                                             <p>Repeated every day starting from "Start date" until "End
                                                                 date"</p>
@@ -152,7 +154,12 @@ const CreateGoalModal = (props: CreateGoalModalProps) => {
                                     <FormItem className="flex flex-col">
                                         <FormLabel>Start Date</FormLabel>
                                         <FormControl>
-                                            <DatePicker {...field} />
+                                            <DatePicker {...field} onChange={(date) => {
+                                                field.onChange(date);
+                                                if (goalType === GoalType.ONE_TIME && date) {
+                                                    form.setValue("endDate", date);
+                                                }
+                                            }} />
                                         </FormControl>
                                         <FormDescription>
                                             Date from when the goal will start
@@ -163,7 +170,7 @@ const CreateGoalModal = (props: CreateGoalModalProps) => {
                             />
                             <FormField
                                 control={form.control}
-                                disabled={false}
+                                disabled={goalType === GoalType.ONE_TIME}
                                 name="endDate"
                                 render={({ field }) => (
                                     <FormItem className="flex flex-col">

@@ -24,7 +24,6 @@ export const useDeleteGoal = (props: UseDeleteGoalProps) => {
             onSuccess(deletedGoalId);
             function deleteGoal(oldGoals?: Goal[]) {
                 if (oldGoals && oldGoals.length > 0) {
-                    console.log(oldGoals.filter(oldGoal => oldGoal.id !== deletedGoalId));
                     return oldGoals.filter(oldGoal => oldGoal.id !== deletedGoalId);
                 }
                 return [];

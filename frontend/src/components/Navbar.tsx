@@ -5,7 +5,7 @@ import { signOut } from "firebase/auth";
 import { useTheme } from "next-themes";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useCallback } from "react";
-import { Hourglass, KeySquare, LogOut, Moon, Sun } from "lucide-react";
+import { Hourglass, KeySquare, LogOut, Moon, Settings2, Sun } from "lucide-react";
 
 import { auth } from "@/firebaseConfig";
 import { ROUTES } from "@/constants/Routes";
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useMediaQuery } from "usehooks-ts";
+import OptionsDropdown from "@/components/OptionsDropdown";
 
 const Navbar = () => {
     const { resolvedTheme, setTheme } = useTheme();
@@ -46,11 +47,13 @@ const Navbar = () => {
                     </Link>
                 </h1>
             </div>
-            <div className="flex items-center gap-x-1 md:gap-x-4">
+            <div className="flex items-center gap-x-1 md:gap-x-2">
                 <Button variant="ghost" size="icon" onClick={onThemeChange}
                         title={resolvedTheme === "dark" ? "Toggle dark mode" : "Toggle light mode"}>
                     {resolvedTheme === "dark" ? <Sun /> : <Moon />}
                 </Button>
+                <OptionsDropdown/>
+
                 <div className="flex items-center gap-x-4">
                     {!authenticated && (
                         <Link href={pathname === ROUTES.LOGIN ? ROUTES.REGISTER : ROUTES.LOGIN}>

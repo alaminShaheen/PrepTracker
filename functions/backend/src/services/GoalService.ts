@@ -237,7 +237,6 @@ async function getUserEmailGoals(userData: User) {
         if (!todayOneTimeGoals.empty) {
             todayOneTimeGoals.forEach((goalDoc) => {
                 const data = GoalRepository.normalizeDates(goalDoc.data());
-                console.log(data.startDate!, data.endDate!);
                 if (isDateInBetweenRange(data.startDate!, data.endDate!, new Date())) {
                     activeOneTimeGoals.push(data as Goal);
                 }
@@ -265,7 +264,7 @@ async function getUserEmailGoals(userData: User) {
         }
         return { activeWeeklyGoals, activeTodayGoals, activeOneTimeGoals };
     } catch (e) {
-        console.log(e);
+        throw e;
     }
 
 }

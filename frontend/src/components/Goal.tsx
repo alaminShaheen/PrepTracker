@@ -41,15 +41,13 @@ const Goal = (props: GoalProps) => {
     }, [type, goal, dateKey, onToggleGoal]);
 
     return (
-        <div className={cn("group flex gap-2 items-center p-2 my-4", {
-            "hover:bg-secondary hover:rounded-md cursor-pointer": type === GoalTime.TODAY
-        })}
-             key={goal.id} onClick={onTogglePressed}>
+        <div className={cn("group flex gap-2 items-center p-2 my-4")}
+             key={goal.id}>
             {
                 type !== GoalTime.TODAY && goal.goalType !== GoalType.WEEKLY ?
                     (<span><Clock className="cursor-not-allowed size-6 text-yellow-300" /></span>)
                     :
-                    (<span>
+                    (<span onClick={onTogglePressed}>
                     {
                         goal.progress[dateKey] ?
                             <CircleCheck className="cursor-pointer size-6 text-green-600" /> :

@@ -38,7 +38,6 @@ export const useCreateGoal = (props: UseCreateGoalProps) => {
                 if (oldGoals) {
                     const updatedGoals = [...oldGoals];
                     updatedGoals.push(response);
-                    console.log(updatedGoals);
                     return updatedGoals;
                 }
                 return [response];
@@ -87,7 +86,6 @@ export const useCreateGoal = (props: UseCreateGoalProps) => {
                 })
             }
 
-            console.log(includeInTodayGoals, includeInNext7DayGoals, includeInTomorrowGoals);
 
             if (includeInTodayGoals) {
                 queryClient.setQueryData<Goal[], string[], Goal[]>([QUERY_KEYS.FETCH_ACTIVE_GOALS], updateGoals);

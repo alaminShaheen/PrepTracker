@@ -35,7 +35,7 @@ const Sidebar = () => {
     }, [createGoal]);
 
     return (
-        <div className="hidden md:block w-[250px] border-border border-r-2 px-4 py-20">
+        <div className="hidden lg:block w-[250px] border-border border-r-2 px-4 py-20">
             <ul className="flex flex-col gap-4">
                 <li className={cn("cursor-pointer hover:text-primary p-2 rounded-md", { "bg-primary text-primary-foreground hover:text-primary-foreground": pathname === ROUTES.DASHBOARD.ROOT })}>
                     <Link href={ROUTES.DASHBOARD.ROOT} className="flex gap-2">

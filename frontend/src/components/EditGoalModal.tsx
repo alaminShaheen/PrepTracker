@@ -29,6 +29,8 @@ const EditGoalModal = (props: EditGoalModalProps) => {
         onEditGoal(formData);
     }, [onEditGoal]);
 
+    const goalType = form.watch("goalType");
+
     return (
         <TooltipProvider>
             <DialogContent>
@@ -94,7 +96,9 @@ const EditGoalModal = (props: EditGoalModalProps) => {
                                                         One time goal
                                                     </FormLabel>
                                                     <Tooltip>
-                                                        <TooltipTrigger><Info size={18} /></TooltipTrigger>
+                                                        <TooltipTrigger type="button" onClick={e => e.preventDefault()}>
+                                                            <Info size={18} />
+                                                        </TooltipTrigger>
                                                         <TooltipContent>
                                                             <p>Goal not repeated</p>
                                                         </TooltipContent>
@@ -108,7 +112,9 @@ const EditGoalModal = (props: EditGoalModalProps) => {
                                                         Weekly goal
                                                     </FormLabel>
                                                     <Tooltip>
-                                                        <TooltipTrigger><Info size={18} /></TooltipTrigger>
+                                                        <TooltipTrigger type="button" onClick={e => e.preventDefault()}>
+                                                            <Info size={18} />
+                                                        </TooltipTrigger>
                                                         <TooltipContent>
                                                             <p>
                                                                 Repeated every 7 days starting from "Start date" until
@@ -126,7 +132,9 @@ const EditGoalModal = (props: EditGoalModalProps) => {
                                                         Daily goal
                                                     </FormLabel>
                                                     <Tooltip>
-                                                        <TooltipTrigger><Info size={18} /></TooltipTrigger>
+                                                        <TooltipTrigger type="button" onClick={e => e.preventDefault()}>
+                                                            <Info size={18} />
+                                                        </TooltipTrigger>
                                                         <TooltipContent>
                                                             <p>Repeated every day starting from "Start date" until "End
                                                                 date"</p>
@@ -148,7 +156,12 @@ const EditGoalModal = (props: EditGoalModalProps) => {
                                     <FormItem className="flex flex-col">
                                         <FormLabel>Start Date</FormLabel>
                                         <FormControl>
-                                            <DatePicker {...field} />
+                                            <DatePicker {...field} onChange={(date) => {
+                                                field.onChange(date);
+                                                if (goalType === GoalType.ONE_TIME && date) {
+                                                    form.setValue("endDate", date);
+                                                }
+                                            }} />
                                         </FormControl>
                                         <FormDescription>
                                             Date from when the goal will start

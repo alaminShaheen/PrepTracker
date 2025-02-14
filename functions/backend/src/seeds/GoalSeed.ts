@@ -93,12 +93,10 @@ async function seedWeeklyGoals(amount: number) {
             });
 
             batch.set(goalDocRef, { ...newGoal });
-            console.log("setting");
         }
 
         await batch.commit();
     } catch (error) {
-        console.log(error);
     }
 }
 
@@ -134,12 +132,10 @@ async function seedDailyGoals(amount: number) {
             });
 
             batch.set(goalDocRef, { ...newGoal });
-            console.log("setting");
         }
 
         await batch.commit();
     } catch (error) {
-        console.log(error);
     }
 }
 
@@ -171,12 +167,10 @@ async function seedOneTimeGoals(amount: number) {
             });
 
             batch.set(goalDocRef, { ...newGoal });
-            console.log("setting");
         }
 
         await batch.commit();
     } catch (error) {
-        console.log(error);
     }
 }
 
@@ -205,11 +199,9 @@ async function seedDatabase() {
             const goal = await goalsTable.add(newGoal);
             const addedGoal = await goal.get();
             if (addedGoal.exists) {
-                console.log(`Created goal ${i + 1}`);
             }
         }
     } catch (error) {
-        console.log(error);
     }
 }
 
@@ -239,7 +231,6 @@ async function cleanDatabase() {
             await batch.commit();
         }
     } catch (error) {
-        console.log(error);
     }
 }
 
@@ -258,7 +249,6 @@ async function batchUpdateGoals() {
             throw new Error("Could not update goals");
         }
     } catch (error) {
-        console.log(error);
     }
 }
 
@@ -285,11 +275,9 @@ async function test() {
                         subject: "Your Tasks for Today",
                         html: email
                     });
-                    console.log(response);
                 }
             }
         }
-        console.log("Emails sent successfully!");
     } catch (error) {
         console.error("Error sending emails:", error);
     }
