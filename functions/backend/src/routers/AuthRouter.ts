@@ -14,6 +14,8 @@ export default (router: Router, baseApiUrl: string = "/") => {
     authRouter.post("/register", registerUserValidator(), AuthController.registerHandler);
     authRouter.post("/oauth/login", verifyAuthentication, AuthController.registerOAuthHandler);
     authRouter.post("/reset-password", resetPasswordValidator(), AuthController.registerPasswordReset);
+    authRouter.get("/unsubscribe", AuthController.unsubscribeEmailSubscription);
+    authRouter.get("/unsubscribe-success", AuthController.unsubscribeSuccess);
 
     router.use(baseApiUrl, authRouter);
     return router;

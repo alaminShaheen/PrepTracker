@@ -15,6 +15,15 @@ const firestoreUserConverter = {
     }
 };
 
+async function getAllUsers() {
+    try {
+        const usersTable = getUserTable();
+        return await usersTable.get();
+    } catch (error) {
+        throw error;
+    }
+}
+
 function getUserTable() {
     try {
         const databaseInstance = getDatabaseInstance();
@@ -86,8 +95,27 @@ async function updateUser(updatedUserInfo: User) {
     }
 }
 
+async function unsubscribeUserEmail(email: string) {
+    try {
+        const usersTable = getUserTable();
+        const userSnapshot = await usersTable.where("email", "==", email).get();
+
+        if (!userSnapshot.empty) {
+            const userDoc = userSnapshot.docs[0]
+            await userDoc.ref.update({...userDoc.data(), subscribed: false});
+            return await findUserRecord(userDoc.data().id);
+        } else {
+            return null;
+        }
+    } catch (error: any) {
+        throw error;
+    }
+}
+
 export const AuthRepository = {
     createUser,
     getUser,
-    updateUser
+    updateUser,
+    getAllUsers,
+    unsubscribeUserEmail
 };

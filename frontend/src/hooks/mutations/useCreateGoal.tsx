@@ -38,6 +38,7 @@ export const useCreateGoal = (props: UseCreateGoalProps) => {
                 if (oldGoals) {
                     const updatedGoals = [...oldGoals];
                     updatedGoals.push(response);
+                    console.log(updatedGoals);
                     return updatedGoals;
                 }
                 return [response];
@@ -86,16 +87,18 @@ export const useCreateGoal = (props: UseCreateGoalProps) => {
                 })
             }
 
+            console.log(includeInTodayGoals, includeInNext7DayGoals, includeInTomorrowGoals);
+
             if (includeInTodayGoals) {
-                queryClient.setQueryData<Goal[], string[], Goal[]>([...QUERY_KEYS.FETCH_ACTIVE_GOALS], updateGoals);
+                queryClient.setQueryData<Goal[], string[], Goal[]>([QUERY_KEYS.FETCH_ACTIVE_GOALS], updateGoals);
             }
 
             if (includeInTomorrowGoals) {
-                queryClient.setQueryData<Goal[], string[], Goal[]>([...QUERY_KEYS.FETCH_TOMORROW_GOALS], updateGoals);
+                queryClient.setQueryData<Goal[], string[], Goal[]>([QUERY_KEYS.FETCH_TOMORROW_GOALS], updateGoals);
             }
 
             if (includeInNext7DayGoals) {
-                queryClient.setQueryData<Goal[], string[], Goal[]>([...QUERY_KEYS.FETCH_NEXT_7_DAY_GOALS], updateGoals);
+                queryClient.setQueryData<Goal[], string[], Goal[]>([QUERY_KEYS.FETCH_NEXT_7_DAY_GOALS], updateGoals);
             }
         },
         onError: (error) => handleErrors(error)

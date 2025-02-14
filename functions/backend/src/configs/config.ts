@@ -32,5 +32,7 @@ export const APP_FIREBASE_SERVICE_UNIVERSE_DOMAIN = String(process.env.APP_FIREB
 
 export const TWILIO_SID = String(process.env.TWILIO_SID) || "";
 export const TWILIO_AUTH_TOKEN = String(process.env.TWILIO_AUTH_TOKEN) || "";
+export const TWILIO_SENDGRID_API_KEY = String(process.env.TWILIO_SENDGRID_API_KEY) || "";
+export const SENDER_EMAIL = String(process.env.SENDER_EMAIL) || "";
 
 export const OPENAI_API_KEY = String(process.env.OPENAI_API_KEY) || "";

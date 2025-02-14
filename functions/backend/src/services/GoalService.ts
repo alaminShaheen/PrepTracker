@@ -6,9 +6,13 @@ import { v4 as uuidv4 } from "uuid";
 import { GoalRepository } from "@/repositories/GoalRepository";
 import { CreateGoalRequestDto } from "@/models/dtos/CreateGoalRequestDto";
 import { UpdateGoalRequestDto } from "@/models/dtos/UpdateGoalRequestDto";
-import { addDays, differenceInCalendarDays, format, isAfter, isBefore, isSameDay, min, parse } from "date-fns";
+import { addDays, differenceInCalendarDays, format, isAfter, min, parse } from "date-fns";
 import { APP_CONSTANTS } from "@/constants/appConstants";
-import { doRangesOverlap, isDateInBetweenRange } from "@/utils/dateUtils";
+import { isDateInBetweenRange } from "@/utils/dateUtils";
+import { User } from "@/models/User";
+import { Timestamp } from "firebase-admin/firestore";
+import { getDatabaseInstance } from "../database";
+import { SERVER_HOSTNAME, SERVER_PORT } from "@/configs/config";
 
 async function createGoal(goal: CreateGoalRequestDto, userId: string) {
     try {
@@ -125,7 +129,7 @@ async function getActiveGoals(userId: string): Promise<Goal[]> {
                     return isDateInBetweenRange(weekStartDate, weekEndDate, new Date());
                 });
             }
-        })
+        });
     } catch (error: any) {
         throw error;
     }
@@ -171,13 +175,165 @@ async function next7DayGoals(userId: string): Promise<Goal[]> {
                     const [weekStartKey, weekEndKey] = dateKey.split(" ");
                     const weekStartDate = parse(weekStartKey, APP_CONSTANTS.DATE_FORMAT, new Date());
                     const weekEndDate = parse(weekEndKey, APP_CONSTANTS.DATE_FORMAT, new Date());
-                    return next7Days.find(day => isDateInBetweenRange(weekStartDate, weekEndDate, day))
+                    return next7Days.find(day => isDateInBetweenRange(weekStartDate, weekEndDate, day));
                 });
             }
         });
     } catch (error: any) {
         throw error;
     }
+}
+
+async function cleanExpiredGoals(userId: string): Promise<void> {
+    try {
+        const batch = getDatabaseInstance().batch();
+        const goalsTable = GoalRepository.getGoalTable();
+        const goalsSnapshot = await goalsTable
+            .where("userId", "==", userId)
+            .where("endDate", "<", Timestamp.fromDate(new Date()))
+            .get();
+
+        if (!goalsSnapshot.empty) {
+            goalsSnapshot.forEach((goalDoc) => {
+                batch.delete(goalDoc.ref);
+            });
+        }
+        await batch.commit();
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function getUserEmailGoals(userData: User) {
+    try {
+        const goalsTable = GoalRepository.getGoalTable();
+        const activeTodayGoals: Goal[] = [];
+        const activeOneTimeGoals: Goal[] = [];
+        const activeWeeklyGoals: Goal[] = [];
+
+        const quoteOfTheDay = "Some motivational quote";
+
+        let todayDailyGoalsSnapshot = await goalsTable
+            .where("userId", "==", userData.id)
+            .where("status", "==", GoalStatus.ACTIVE)
+            .where("goalType", "==", GoalType.DAILY)
+            .get();
+
+        const todayOneTimeGoals = await goalsTable
+            .where("userId", "==", userData.id)
+            .where("status", "==", GoalStatus.ACTIVE)
+            .where("goalType", "==", GoalType.ONE_TIME)
+            .get();
+
+        if (!todayDailyGoalsSnapshot.empty) {
+            todayDailyGoalsSnapshot.forEach((goalDoc) => {
+                const data = GoalRepository.normalizeDates(goalDoc.data());
+                if (isDateInBetweenRange(data.startDate!, data.endDate!, new Date())) {
+                    activeTodayGoals.push(data as Goal);
+                }
+            });
+        }
+
+        if (!todayOneTimeGoals.empty) {
+            todayOneTimeGoals.forEach((goalDoc) => {
+                const data = GoalRepository.normalizeDates(goalDoc.data());
+                console.log(data.startDate!, data.endDate!);
+                if (isDateInBetweenRange(data.startDate!, data.endDate!, new Date())) {
+                    activeOneTimeGoals.push(data as Goal);
+                }
+            });
+        }
+
+        const todayWeeklyGoalsSnapshot = await goalsTable
+            .where("userId", "==", userData.id)
+            .where("status", "==", GoalStatus.ACTIVE)
+            .where("goalType", "==", GoalType.WEEKLY)
+            .get();
+
+        if (!todayWeeklyGoalsSnapshot.empty) {
+            todayWeeklyGoalsSnapshot.forEach((goalDoc) => {
+                const data = goalDoc.data();
+                const found = Object.entries(data.progress).find(([key, value]) => {
+                    const [startDateKey, endDateKey] = key.split(" ").map(dateKey => parse(dateKey, APP_CONSTANTS.DATE_FORMAT, new Date()));
+                    if (isDateInBetweenRange(startDateKey, endDateKey, new Date()) && value) {
+                        activeWeeklyGoals.push(data);
+                        return true;
+                    }
+                });
+                if (found) activeWeeklyGoals.push(data);
+            });
+        }
+        return { activeWeeklyGoals, activeTodayGoals, activeOneTimeGoals };
+    } catch (e) {
+        console.log(e);
+    }
+
+}
+
+async function createEmailTemplate(user: User, dailyGoals: Goal[], weeklyGoals: Goal[], oneTimeGoals: Goal[]) {
+    return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body { font-family: Arial, sans-serif; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; }
+            h2 { color: #333; }
+            .goal-section { margin-bottom: 20px; }
+            .goal { padding: 10px; border-bottom: 1px solid #eee; }
+            .goal:last-child { border-bottom: none; }
+            .footer { margin-top: 20px; font-size: 12px; color: #666; text-align: center; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>Hello ${user.firstname},</h2>
+            <p>Here are your pending tasks for today:</p>
+
+            ${dailyGoals.length > 0 ? `
+            <div class="goal-section">
+                <h3>📅 Daily Tasks</h3>
+                ${dailyGoals.map(goal => `
+                    <div class="goal">
+                        <strong>${goal.name}</strong>
+                        <p>${goal.description || "No description provided."}</p>
+                    </div>
+                `).join("")}
+            </div>
+            ` : ""}
+
+            ${weeklyGoals.length > 0 ? `
+            <div class="goal-section">
+                <h3>📆 Weekly Tasks</h3>
+                ${weeklyGoals.map(goal => `
+                    <div class="goal">
+                        <strong>${goal.name}</strong>
+                        <p>${goal.description || "No description provided."}</p>
+                    </div>
+                `).join("")}
+            </div>
+            ` : ""}
+
+            ${oneTimeGoals.length > 0 ? `
+            <div class="goal-section">
+                <h3>✅ One-Time Tasks</h3>
+                ${oneTimeGoals.map(goal => `
+                    <div class="goal">
+                        <strong>${goal.name}</strong>
+                        <p>${goal.description || "No description provided."}</p>
+                    </div>
+                `).join("")}
+            </div>
+            ` : ""}
+
+            <p>Stay productive! 🚀</p>
+            <div class="footer">
+                <p><a href="http://${SERVER_HOSTNAME}:${SERVER_PORT}/api/auth/unsubscribe?email=${encodeURIComponent(user.email)}">Unsubscribe</a> | <a href="http://${SERVER_HOSTNAME}:${SERVER_PORT}">Visit Dashboard</a></p>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
 }
 
 export const GoalService = {
@@ -188,4 +344,7 @@ export const GoalService = {
     getActiveGoals,
     getTomorrowGoals,
     next7DayGoals,
+    getUserEmailGoals,
+    createEmailTemplate,
+    cleanExpiredGoals
 };

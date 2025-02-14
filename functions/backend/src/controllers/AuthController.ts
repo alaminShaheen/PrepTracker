@@ -47,9 +47,31 @@ async function registerPasswordReset(request: Request<{}, {}, RegisterUserDto>, 
     }
 }
 
+async function unsubscribeEmailSubscription(request: Request<{}, {}, {}, {email: string}>, response: Response, next: NextFunction) {
+    try {
+        handleFormValidationErrors(request);
+        const decodedEmail = decodeURIComponent(request.query.email);
+        await AuthService.unsubscribeEmail(decodedEmail);
+        response.redirect(`/api/auth/unsubscribe-success?email=${encodeURIComponent(decodedEmail)}`);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function unsubscribeSuccess(request: Request<{}, {}, {}, { email: string }>, response: Response, next: NextFunction) {
+    try {
+        response.send(`<h1>Successfully unsubscribed: ${request.query.email}</h1>`);
+    } catch (error) {
+        next(error);
+    }
+
+}
+
 export const AuthController = {
     loginHandler,
     registerHandler,
     registerPasswordReset,
     registerOAuthHandler,
+    unsubscribeEmailSubscription,
+    unsubscribeSuccess
 };

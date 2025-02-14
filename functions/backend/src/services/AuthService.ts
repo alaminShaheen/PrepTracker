@@ -17,6 +17,8 @@ import { RegisterUserDto } from "@/models/dtos/RegisterUserDto";
 import { LoginRequestDto } from "@/models/dtos/LoginRequestDto";
 import { AppValidationError } from "@/errors/AppValidationError";
 import { ResetPasswordRequestDto } from "@/models/dtos/ResetPasswordRequestDto";
+import { GoalRepository } from "@/repositories/GoalRepository";
+import { error } from "@/utils/logging";
 
 async function login(userLoginInfo: LoginRequestDto, response: Response) {
     try {
@@ -70,7 +72,8 @@ async function register(userInfo: RegisterUserDto) {
             firstname: userInfo.firstname,
             lastname: userInfo.lastname,
             id: userCredentials.user.uid,
-            createdAt: new Date()
+            createdAt: new Date(),
+            subscribed: true,
         });
         return await AuthRepository.createUser(newUser);
     } catch (error: any) {
@@ -94,7 +97,8 @@ async function registerOAuthUser(firebaseUser: FirebaseUser) {
             firstname: firebaseUser.displayName?.split(" ")[0] || (firebaseUser as any).name?.split(" ")[0] || "",
             lastname: firebaseUser.displayName?.split(" ")[1] || (firebaseUser as any).name?.split(" ")[1] || "",
             id: firebaseUser.uid,
-            createdAt: new Date()
+            createdAt: new Date(),
+            subscribed: true,
         };
 
         if (!user) {
@@ -136,10 +140,23 @@ async function resetPassword(resetInfo: ResetPasswordRequestDto) {
     }
 }
 
+async function unsubscribeEmail(email: string) {
+    try {
+        const newUser = AuthRepository.unsubscribeUserEmail(email);
+        if (!newUser) {
+            throw new AppError(400, "Email not found");
+        }
+        return newUser;
+    } catch (error) {
+        throw error;
+    }
+}
+
 
 export const AuthService = {
     login,
     register,
     resetPassword,
-    registerOAuthUser
+    unsubscribeEmail,
+    registerOAuthUser,
 };

@@ -95,26 +95,26 @@ export const useUpdateGoal = (props: UseUpdateGoalProps) => {
 
             if (includeInTodayGoals) {
                 // add to today goals if updated goal has become a today goal
-                queryClient.setQueryData<Goal[], string[], Goal[]>([...QUERY_KEYS.FETCH_ACTIVE_GOALS], addUpdatedGoal);
+                queryClient.setQueryData<Goal[], string[], Goal[]>([QUERY_KEYS.FETCH_ACTIVE_GOALS], addUpdatedGoal);
             } else {
                 // else delete if updated goal has is no longer a today goal
-                queryClient.setQueryData<Goal[], string[], Goal[]>([...QUERY_KEYS.FETCH_ACTIVE_GOALS], deleteUpdatedGoal);
+                queryClient.setQueryData<Goal[], string[], Goal[]>([QUERY_KEYS.FETCH_ACTIVE_GOALS], deleteUpdatedGoal);
             }
 
             if (includeInTomorrowGoals) {
                 // add to tomorrow goals if updated goal has become a tomorrow goal
-                queryClient.setQueryData<Goal[], string[], Goal[]>([...QUERY_KEYS.FETCH_TOMORROW_GOALS], addUpdatedGoal);
+                queryClient.setQueryData<Goal[], string[], Goal[]>([QUERY_KEYS.FETCH_TOMORROW_GOALS], addUpdatedGoal);
             } else {
                 // else delete if updated goal has is no longer a tomorrow goal
-                queryClient.setQueryData<Goal[], string[], Goal[]>([...QUERY_KEYS.FETCH_TOMORROW_GOALS], deleteUpdatedGoal);
+                queryClient.setQueryData<Goal[], string[], Goal[]>([QUERY_KEYS.FETCH_TOMORROW_GOALS], deleteUpdatedGoal);
             }
 
             if (includeInNext7DayGoals) {
                 // add to next7Day goals if updated goal has become a next7Day goal
-                queryClient.setQueryData<Goal[], string[], Goal[]>([...QUERY_KEYS.FETCH_NEXT_7_DAY_GOALS], addUpdatedGoal);
+                queryClient.setQueryData<Goal[], string[], Goal[]>([QUERY_KEYS.FETCH_NEXT_7_DAY_GOALS], addUpdatedGoal);
             } else {
                 // else delete if updated goal has is no longer a next7Day goal
-                queryClient.setQueryData<Goal[], string[], Goal[]>([...QUERY_KEYS.FETCH_NEXT_7_DAY_GOALS], deleteUpdatedGoal);
+                queryClient.setQueryData<Goal[], string[], Goal[]>([QUERY_KEYS.FETCH_NEXT_7_DAY_GOALS], deleteUpdatedGoal);
             }
         },
         onError: (error) => {
