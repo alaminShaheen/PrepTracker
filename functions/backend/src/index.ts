@@ -48,7 +48,7 @@ app.listen(SERVER_PORT, () => {
 
 exports.app = functions.https.onRequest(app);
 
-export const sendDailyEmails = firebaseV2Functions.scheduler.onSchedule("every day 00:00", async (event) => {
+exports.scheduler = firebaseV2Functions.scheduler.onSchedule("every day 00:00", async (event) => {
     try {
         const allUsers = await AuthRepository.getAllUsers();
         const userData: User[] = [];
