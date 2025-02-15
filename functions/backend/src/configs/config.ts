@@ -11,6 +11,7 @@ export const TEST = process.env.NODE_ENV === "test";
 export const SERVER_HOSTNAME = process.env.SERVER_HOSTNAME || "localhost";
 export const SERVER_PORT = process.env.SERVER_PORT ? Number(process.env.SERVER_PORT) : 1337;
 export const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "";
+export const SERVER_URL = process.env.SERVER_URL || "http://localhost:" + SERVER_PORT;
 
 export const APP_FIREBASE_API_KEY = String(process.env.APP_FIREBASE_API_KEY) || "";
 export const APP_FIREBASE_AUTH_DOMAIN = String(process.env.APP_FIREBASE_AUTH_DOMAIN) || "";

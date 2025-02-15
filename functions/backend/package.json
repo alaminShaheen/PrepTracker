@@ -1,14 +1,17 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx nodemon",
     "build": "rimraf ./dist && tsc",
     "start": "npm run build && node dist/index.js",
-    "seed": "npm run build && ts-node src/seeds/GoalSeed.ts"
+    "lint": "",
+    "seed": "npm run build && ts-node src/seeds/GoalSeed.ts",
+    "deploy": "firebase deploy --only functions"
   },
+  "type": "commonjs",
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -34,7 +37,7 @@
     "express-validator": "^7.2.1",
     "firebase": "^11.2.0",
     "firebase-admin": "^13.0.2",
-    "firebase-functions": "^6.3.1",
+    "firebase-functions": "^6.3.2",
     "module-alias": "^2.2.3",
     "openai": "^4.82.0",
     "twilio": "^5.4.3",

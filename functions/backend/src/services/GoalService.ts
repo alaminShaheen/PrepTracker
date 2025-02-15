@@ -12,7 +12,7 @@ import { isDateInBetweenRange } from "@/utils/dateUtils";
 import { User } from "@/models/User";
 import { Timestamp } from "firebase-admin/firestore";
 import { getDatabaseInstance } from "../database";
-import { SERVER_HOSTNAME, SERVER_PORT } from "@/configs/config";
+import { CLIENT_ORIGIN, SERVER_HOSTNAME, SERVER_PORT, SERVER_URL } from "@/configs/config";
 
 async function createGoal(goal: CreateGoalRequestDto, userId: string) {
     try {
@@ -327,7 +327,7 @@ async function createEmailTemplate(user: User, dailyGoals: Goal[], weeklyGoals: 
 
             <p>Stay productive! 🚀</p>
             <div class="footer">
-                <p><a href="http://${SERVER_HOSTNAME}:${SERVER_PORT}/api/auth/unsubscribe?email=${encodeURIComponent(user.email)}">Unsubscribe</a> | <a href="http://${SERVER_HOSTNAME}:${SERVER_PORT}">Visit Dashboard</a></p>
+                <p><a href="${SERVER_URL}/api/auth/unsubscribe?email=${encodeURIComponent(user.email)}">Unsubscribe</a> | <a href="${CLIENT_ORIGIN}/dashboard">Visit Dashboard</a></p>
             </div>
         </div>
     </body>
