@@ -41,7 +41,7 @@ const firebaseServiceConfig = {
     auth_provider_x509_cert_url: APP_FIREBASE_SERVICE_AUTH_PROVIDER_X509_CERT_URL,
     client_x509_cert_url: APP_FIREBASE_SERVICE_CLIENT_X509_CERT_URL,
     universe_domain: APP_FIREBASE_SERVICE_UNIVERSE_DOMAIN
-};
+}
 
 
 export const firebaseApp = initializeApp(firebaseConfig);
