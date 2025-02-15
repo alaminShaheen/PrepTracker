@@ -36,4 +36,4 @@ export const TWILIO_AUTH_TOKEN = String(process.env.TWILIO_AUTH_TOKEN) || "";
 export const TWILIO_SENDGRID_API_KEY = String(process.env.TWILIO_SENDGRID_API_KEY) || "";
 export const SENDER_EMAIL = String(process.env.SENDER_EMAIL) || "";
 
-export const OPENAI_API_KEY = String(process.env.OPENAI_API_KEY) || "";
+export const OPENROUTER_API_KEY = String(process.env.OPENROUTER_API_KEY) || "";

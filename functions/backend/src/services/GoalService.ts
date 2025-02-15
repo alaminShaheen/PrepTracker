@@ -12,7 +12,9 @@ import { isDateInBetweenRange } from "@/utils/dateUtils";
 import { User } from "@/models/User";
 import { Timestamp } from "firebase-admin/firestore";
 import { getDatabaseInstance } from "../database";
-import { CLIENT_ORIGIN, SERVER_HOSTNAME, SERVER_PORT, SERVER_URL } from "@/configs/config";
+import { CLIENT_ORIGIN, OPENROUTER_API_KEY, SERVER_URL } from "@/configs/config";
+import axios from "axios";
+import { VisualizationService } from "@/services/VisualizationService";
 
 async function createGoal(goal: CreateGoalRequestDto, userId: string) {
     try {
@@ -69,8 +71,9 @@ async function updateGoal(goalInfo: UpdateGoalRequestDto, goalId: string, userId
             throw new AppError(500, "Goal could not be updated");
         }
 
-        return updatedGoal;
+        await VisualizationService.updateHeatmapEntries(goal, updatedGoal, userId);
 
+        return updatedGoal;
     } catch (error) {
         throw error;
     }
@@ -270,6 +273,7 @@ async function getUserEmailGoals(userData: User) {
 }
 
 async function createEmailTemplate(user: User, dailyGoals: Goal[], weeklyGoals: Goal[], oneTimeGoals: Goal[]) {
+    const motivationalQuote = await getAiMotivationalQuote();
     return `
     <!DOCTYPE html>
     <html>
@@ -287,8 +291,13 @@ async function createEmailTemplate(user: User, dailyGoals: Goal[], weeklyGoals: 
     <body>
         <div class="container">
             <h2>Hello ${user.firstname},</h2>
+           <div style="margin: 8px 0;">   
+                <h2 style="color: #2c3e50;">📢 Daily Motivation</h2>
+                <p style="font-style: italic; font-size: 18px; color: #16a085;">"${motivationalQuote}"</p>
+            </div>
+            
+            
             <p>Here are your pending tasks for today:</p>
-
             ${dailyGoals.length > 0 ? `
             <div class="goal-section">
                 <h3>📅 Daily Tasks</h3>
@@ -335,7 +344,37 @@ async function createEmailTemplate(user: User, dailyGoals: Goal[], weeklyGoals: 
     `;
 }
 
+async function getAiMotivationalQuote(): Promise<string> {
+    const prompt = `You are an AI coach helping a students stay motivated. Generate a short, uplifting message to keep them motivated. Just give it to me in text format. Don't return anything else.`;
+
+    try {
+        const response = await axios.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            {
+                model: "meta-llama/llama-3.2-11b-vision-instruct:free",
+                messages: [{ role: "system", content: "You are a motivational AI coach." }, {
+                    role: "user",
+                    content: prompt
+                }],
+                max_tokens: 100
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        return response.data.choices[0].message.content;
+    } catch (error: any) {
+        console.error("Error generating message:", error.response ? error.response.data : error.message);
+        return "Keep pushing forward! You are making great progress. 🚀";
+    }
+}
+
 export const GoalService = {
+    getAiMotivationalQuote,
     createGoal,
     getGoal,
     deleteGoal,

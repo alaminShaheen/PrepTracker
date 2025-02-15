@@ -13,9 +13,8 @@ import { APP_CONSTANTS } from "@/constants/appConstants";
 import { User } from "@/models/User";
 import { FirebaseUser } from "@/models/Firebase/FirebaseUser";
 import { AuthRepository } from "@/repositories/AuthRepository";
-import { GoalService } from "@/services/GoalService";
-import sgMail from "@sendgrid/mail";
-import { SENDER_EMAIL, TWILIO_SENDGRID_API_KEY } from "@/configs/config";
+import { GoalRepository } from "@/repositories/GoalRepository";
+import { VisualizationRepository } from "@/repositories/VisualizationRepository";
 
 
 const firestoreGoalConverter = {
@@ -254,30 +253,38 @@ async function batchUpdateGoals() {
 
 async function test() {
     try {
-        sgMail.setApiKey(TWILIO_SENDGRID_API_KEY);
-        const allUsers = await AuthRepository.getAllUsers();
-        const userData: User[] = [];
-
-        allUsers.forEach((user) => {
-            const data = user.data();
-            userData.push(data);
-        });
-
-        for (const userDatum of userData) {
-            await GoalService.cleanExpiredGoals(userDatum.id);
-            if (userDatum.subscribed) {
-                const result = await GoalService.getUserEmailGoals(userDatum);
-                if (result) {
-                    const email = await GoalService.createEmailTemplate(userDatum, result.activeTodayGoals, result.activeWeeklyGoals, result.activeOneTimeGoals);
-                    const response = await sgMail.send({
-                        to: "glamborghini74@gmail.com",
-                        from: SENDER_EMAIL,
-                        subject: "Your Tasks for Today",
-                        html: email
-                    });
-                }
-            }
-        }
+        // const batch = databaseInstance.batch();
+        // const visualizationDocRef = databaseInstance.collection(DATABASE_CONSTANTS.VISUALIZATION_TABLE).doc();
+        // const userSnapshots = await AuthRepository.getAllUsers();
+        // const userData = userSnapshots.docs.map(doc => doc.data());
+        // for (const userDatum of userData) {
+        //     const userGoals = await GoalRepository.getAllGoals(userDatum.id);
+        //     for (let userGoal of userGoals) {
+        //         userGoal = { ...userGoal, ...GoalRepository.normalizeDates(userGoal) };
+        //         if ([GoalType.ONE_TIME, GoalType.DAILY].includes(userGoal.goalType)) {
+        //             for (const [dateKey, completed] of Object.entries(userGoal.progress)) {
+        //                 if (!completed) continue;
+        //                 const visualizationTable = VisualizationRepository.getVisualizationTable();
+        //                 const userVisualizationSnapshot = await visualizationTable.where("userId", "==", userDatum.id).where("dateKey", "==", dateKey).get();
+        //                 if (userVisualizationSnapshot.empty) {
+        //                     batch.set()
+        //                 } else {
+        //                     const userVisualizationData = userVisualizationSnapshot.docs[0].data();
+        //                     batch.update(, {
+        //                         ...userVisualizationData,
+        //                         tasksCompleted: userVisualizationData.tasksCompleted + 1
+        //                     });
+        //                 }
+        //             }
+        //             Object.entries(goalSnapshot.data().progress).map(([dateKey, completed]) => {
+        //                 // check if dateKey heatmapEntry exists
+        //
+        //             });
+        //             batch.update(goalSnapshot.id, { ...goalSnapshot.data() });
+        //
+        //         }
+        //     }
+        // }
     } catch (error) {
         console.error("Error sending emails:", error);
     }

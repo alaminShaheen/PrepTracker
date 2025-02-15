@@ -196,6 +196,7 @@ export const GoalRepository = {
     deleteGoal,
     getActiveGoals,
     getUpcomingGoals,
+    getGoalSnapshot,
     getGoal,
     getAllGoals,
     getGoalTable,normalizeDates
