@@ -23,6 +23,11 @@ jobs:
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
 
+      - name: Set up Firebase authentication
+        env:
+          FIREBASE SECRETS: ${{ secrets.APP_FIREBASE_SERVICE_PRIVATE_KEY }}
+        run: echo "${{ secrets.APP_FIREBASE_SERVICE_PRIVATE_KEY }}" > $HOME/.firebase/credentials.json
+
       - name: Install dependencies
         run: cd functions/backend && npm install
 
