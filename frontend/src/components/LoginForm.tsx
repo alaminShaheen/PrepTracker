@@ -54,7 +54,7 @@ const LoginForm = () => {
             }
 
             reset({ email: "", password: "" });
-            router.push(ROUTES.DASHBOARD);
+            router.push(ROUTES.DASHBOARD.ROOT);
         } catch (error: unknown) {
             handleErrors<LoginFormModel>(error, setError);
         } finally {
@@ -63,7 +63,7 @@ const LoginForm = () => {
     }, [onUserLogin, reset, router, handleErrors, setError]);
 
     const onThirdPartyLoginSuccess = useCallback(() => {
-        router.push(ROUTES.DASHBOARD);
+        router.push(ROUTES.DASHBOARD.ROOT);
     }, [router]);
 
     const { mutate: loginMutate, isPending: loginMutationPending } = useLoginMutation({
@@ -184,7 +184,7 @@ const LoginForm = () => {
                 </Button>
             </div>
             <span className="text-xs text-center">
-                Don't have an account? <Link href={ROUTES.REGISTER} className="underline decoration-2 decoration-blue-400 text-blue-400">Register</Link>
+                Don&apos;t have an account? <Link href={ROUTES.REGISTER} className="underline decoration-2 decoration-blue-400 text-blue-400">Register</Link>
             </span>
         </form>
 

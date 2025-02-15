@@ -3,7 +3,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useUpdateGoal } from "@/hooks/mutations/useUpdateGoal";
 import { toast } from "sonner";
-import { getGoalDateKey, toastDateFormat } from "@/lib/utils";
+import { toastDateFormat } from "@/lib/utils";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useFetchTomorrowGoals } from "@/hooks/queries/useFetchTomorrowGoals";
 import { Goal as GoalModel } from "@/models/Goal";
@@ -72,7 +72,7 @@ const Tomorrow = () => {
         } else if (isDeletingGoalsError) {
             handleErrors(deletingGoalsError);
         }
-    }, [isDeletingGoal, deletingGoalsError, isFetchTomorrowGoalsError, handleErrors, fetchTomorrowGoalsError, updatingGoalsError, isUpdatingGoalsError]);
+    }, [isDeletingGoalsError, isDeletingGoal, deletingGoalsError, isFetchTomorrowGoalsError, handleErrors, fetchTomorrowGoalsError, updatingGoalsError, isUpdatingGoalsError]);
 
     const onDeleteGoal = useCallback((goalId: string) => {
         deleteGoal(goalId);
@@ -95,7 +95,7 @@ const Tomorrow = () => {
         <Dialog open={!!goalToEdit} onOpenChange={() => setGoalToEdit(prev => prev ? undefined : prev)}>
             <div className="gap-4 w-2/3 mx-auto">
                 <h1 className="text-3xl font-bold">
-                    Tomorrow's goals
+                    Tomorrow&apos;s goals
                 </h1>
 
                 <div className="flex font-bold mt-8 text-lg">

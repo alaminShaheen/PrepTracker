@@ -8,7 +8,7 @@ import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { GoalType } from "@/models/enums/GoalType";
 import Goal from "@/components/Goal";
 import { Goal as GoalModel } from "@/models/Goal";
-import { getGoalDateKey, toastDateFormat } from "@/lib/utils";
+import { toastDateFormat } from "@/lib/utils";
 import { useUpdateGoal } from "@/hooks/mutations/useUpdateGoal";
 import { toast } from "sonner";
 import GoalsSectionSkeleton from "@/components/GoalsSectionSkeleton";
@@ -102,7 +102,7 @@ const Dashboard = () => {
             }
             <div className="gap-4 w-2/3 mx-auto">
                 <h1 className="text-3xl font-bold">
-                    Today's goals
+                    Today&apos;s goals
                 </h1>
 
                 <div className="flex font-bold mt-8 text-lg">

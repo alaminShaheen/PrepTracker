@@ -117,9 +117,9 @@ const CreateGoalModal = (props: CreateGoalModalProps) => {
                                                         <TooltipTrigger type="button" onClick={e => e.preventDefault()}><Info size={18} /></TooltipTrigger>
                                                         <TooltipContent>
                                                             <p>
-                                                                Repeated every 7 days starting from "Start date" until
-                                                                "End
-                                                                date"
+                                                                Repeated every 7 days starting from &quot;Start date&quot; until
+                                                                &quot;End
+                                                                date&quot;
                                                             </p>
                                                         </TooltipContent>
                                                     </Tooltip>
@@ -134,8 +134,7 @@ const CreateGoalModal = (props: CreateGoalModalProps) => {
                                                     <Tooltip>
                                                         <TooltipTrigger type="button" onClick={e => e.preventDefault()}><Info size={18} /></TooltipTrigger>
                                                         <TooltipContent>
-                                                            <p>Repeated every day starting from "Start date" until "End
-                                                                date"</p>
+                                                            <p>Repeated every day starting from &quot;Start date&quot; until &quot;End date&quot;</p>
                                                         </TooltipContent>
                                                     </Tooltip>
                                                 </FormItem>

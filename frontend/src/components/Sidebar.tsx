@@ -16,9 +16,9 @@ const Sidebar = () => {
     const pathname = usePathname();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {
-        isPending: isCreatingGoal,
-        isError: isCreatingGoalsError,
-        error: creatingGoalsError,
+        // isPending: isCreatingGoal,
+        // isError: isCreatingGoalsError,
+        // error: creatingGoalsError,
         mutate: createGoal
     } = useCreateGoal({
         onSuccess: () => {

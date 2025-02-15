@@ -2,7 +2,6 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/constants/QueryKeys";
-import { fetchActiveGoals } from "@/services/FetchActiveGoals";
 import { fetchTomorrowGoals } from "@/services/FetchTomorrowGoals";
 
 type UseFetchTomorrowGoalProps = {
@@ -27,7 +26,7 @@ export const useFetchTomorrowGoals = (props: UseFetchTomorrowGoalProps) => {
                     };
                 });
             },
-            enabled,
+            enabled
         }
     );
 };

@@ -117,7 +117,7 @@ export const useUpdateGoal = (props: UseUpdateGoalProps) => {
                 queryClient.setQueryData<Goal[], string[], Goal[]>([QUERY_KEYS.FETCH_NEXT_7_DAY_GOALS], deleteUpdatedGoal);
             }
         },
-        onError: (error) => {
+        onError: () => {
             handleErrors(new Error("There was an error updating the goal"));
         }
     });

@@ -1,11 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { Check } from "lucide-react";
 import React from "react";
 
 import RegistrationForm from "@/components/RegistrationForm";
-import { ROUTES } from "@/constants/Routes";
 
 const Register = () => {
     return (

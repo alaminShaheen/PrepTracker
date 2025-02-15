@@ -5,7 +5,7 @@ import { signOut } from "firebase/auth";
 import { useTheme } from "next-themes";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useCallback } from "react";
-import { Hourglass, KeySquare, LogOut, Moon, Settings2, Sun } from "lucide-react";
+import { Hourglass, KeySquare, LogOut, Moon, Sun } from "lucide-react";
 
 import { auth } from "@/firebaseConfig";
 import { ROUTES } from "@/constants/Routes";
@@ -41,7 +41,8 @@ const Navbar = () => {
         <nav className="p-6 flex justify-between items-center bg-background border-b-2 h-20 sticky top-0">
             <div>
                 <h1 className="text-2xl font-bold md:block hidden">
-                    <Link href={authenticated ? ROUTES.DASHBOARD.ROOT : ROUTES.LOGIN} className="relative z-20 flex items-center text-lg font-medium">
+                    <Link href={authenticated ? ROUTES.DASHBOARD.ROOT : ROUTES.LOGIN}
+                          className="relative z-20 flex items-center text-lg font-medium">
                         <Hourglass />
                         PrepTracker
                     </Link>
@@ -52,7 +53,7 @@ const Navbar = () => {
                         title={resolvedTheme === "dark" ? "Toggle dark mode" : "Toggle light mode"}>
                     {resolvedTheme === "dark" ? <Sun /> : <Moon />}
                 </Button>
-                <OptionsDropdown/>
+                <OptionsDropdown />
 
                 <div className="flex items-center gap-x-4">
                     {!authenticated && (

@@ -3,7 +3,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useUpdateGoal } from "@/hooks/mutations/useUpdateGoal";
 import { toast } from "sonner";
-import { getGoalDateKey, toastDateFormat } from "@/lib/utils";
+import { toastDateFormat } from "@/lib/utils";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { Goal as GoalModel } from "@/models/Goal";
 import GoalsSectionSkeleton from "@/components/GoalsSectionSkeleton";
@@ -102,7 +102,7 @@ const Next7Days = () => {
             }
             <div className="gap-4 w-2/3 mx-auto">
                 <h1 className="text-3xl font-bold">
-                    Next 7 day's goals
+                    Next 7 day&apos;s goals
                 </h1>
 
                 <div className="flex font-bold mt-8 text-lg">
