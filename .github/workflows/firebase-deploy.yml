@@ -5,7 +5,7 @@ on:
     branches:
       - main  # Deploy only on the main branch
     paths:
-      - 'functions/backend'  # Trigger only if files in this folder change
+      - 'functions/backend/**'  # Trigger only if files in this folder change
 
 jobs:
   deploy:
