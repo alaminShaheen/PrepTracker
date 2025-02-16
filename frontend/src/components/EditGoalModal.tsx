@@ -31,7 +31,6 @@ const EditGoalModal = (props: EditGoalModalProps) => {
 
     const goalType = form.watch("goalType");
     const startDate = new Date(form.watch("startDate"));
-    const endDate = new Date(form.watch("endDate"));
 
     return (
         <TooltipProvider>
@@ -119,7 +118,8 @@ const EditGoalModal = (props: EditGoalModalProps) => {
                                                         </TooltipTrigger>
                                                         <TooltipContent>
                                                             <p>
-                                                                Repeated every 7 days starting from &quot;Start date&quot; until
+                                                                Repeated every 7 days starting from &quot;Start
+                                                                date&quot; until
                                                                 &quot;End date&quot;
                                                             </p>
                                                         </TooltipContent>
@@ -137,7 +137,8 @@ const EditGoalModal = (props: EditGoalModalProps) => {
                                                             <Info size={18} />
                                                         </TooltipTrigger>
                                                         <TooltipContent>
-                                                            <p>Repeated every day starting from &quot;Start date&quot; until &quot;End date&quot;</p>
+                                                            <p>Repeated every day starting from &quot;Start
+                                                                date&quot; until &quot;End date&quot;</p>
                                                         </TooltipContent>
                                                     </Tooltip>
                                                 </FormItem>

@@ -11,15 +11,13 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
 import { DatePicker } from "@/components/DatetimePicker";
-import { APP_CONSTANTS } from "@/constants/AppConstants";
-import { format } from "date-fns";
 
 type CreateGoalModalProps = {
     onCreateGoal: (data: GoalForm) => void;
 }
 
 const CreateGoalModal = (props: CreateGoalModalProps) => {
-    const {onCreateGoal} = props;
+    const { onCreateGoal } = props;
 
 
     const form = useForm<GoalForm>({
@@ -40,7 +38,6 @@ const CreateGoalModal = (props: CreateGoalModalProps) => {
 
     const goalType = form.watch("goalType");
     const startDate = new Date(form.watch("startDate"));
-    const endDate = new Date(form.watch("endDate"));
 
     return (
         <TooltipProvider>
@@ -105,7 +102,8 @@ const CreateGoalModal = (props: CreateGoalModalProps) => {
                                                         One time goal
                                                     </FormLabel>
                                                     <Tooltip>
-                                                        <TooltipTrigger type="button" onClick={e => e.preventDefault()}><Info size={18} /></TooltipTrigger>
+                                                        <TooltipTrigger type="button" onClick={e => e.preventDefault()}><Info
+                                                            size={18} /></TooltipTrigger>
                                                         <TooltipContent>
                                                             <p>Goal not repeated</p>
                                                         </TooltipContent>
@@ -119,10 +117,12 @@ const CreateGoalModal = (props: CreateGoalModalProps) => {
                                                         Weekly goal
                                                     </FormLabel>
                                                     <Tooltip>
-                                                        <TooltipTrigger type="button" onClick={e => e.preventDefault()}><Info size={18} /></TooltipTrigger>
+                                                        <TooltipTrigger type="button" onClick={e => e.preventDefault()}><Info
+                                                            size={18} /></TooltipTrigger>
                                                         <TooltipContent>
                                                             <p>
-                                                                Repeated every 7 days starting from &quot;Start date&quot; until
+                                                                Repeated every 7 days starting from &quot;Start
+                                                                date&quot; until
                                                                 &quot;End
                                                                 date&quot;
                                                             </p>
@@ -137,9 +137,11 @@ const CreateGoalModal = (props: CreateGoalModalProps) => {
                                                         Daily goal
                                                     </FormLabel>
                                                     <Tooltip>
-                                                        <TooltipTrigger type="button" onClick={e => e.preventDefault()}><Info size={18} /></TooltipTrigger>
+                                                        <TooltipTrigger type="button" onClick={e => e.preventDefault()}><Info
+                                                            size={18} /></TooltipTrigger>
                                                         <TooltipContent>
-                                                            <p>Repeated every day starting from &quot;Start date&quot; until &quot;End date&quot;</p>
+                                                            <p>Repeated every day starting from &quot;Start
+                                                                date&quot; until &quot;End date&quot;</p>
                                                         </TooltipContent>
                                                     </Tooltip>
                                                 </FormItem>
