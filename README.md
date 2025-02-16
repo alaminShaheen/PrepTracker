@@ -76,5 +76,8 @@ Users can view all their daily, weekly and one time goals for the next 7 days
 Users can view a heatmap of their goals for the current year
 ![Progress Page](https://github.com/user-attachments/assets/1ad7d7f2-ccb5-4924-a0ea-e61b5a943f06 "Progress Page")
 
+## :construction: Challenges I faced
+One of the key challenges I faced was storing and managing student progress over an extended period, from start to end date. Keeping track of dynamic data across multiple goals and dates proved complex. Additionally, date management and operations were a major hurdle, as the project heavily relied on precise date calculations and dynamic updates. I had to ensure that progress was properly tracked across different goal types, which required careful handling of dates, progress mapping, and synchronization across various components of the app.
+
 ## :rocket: How to launch
 Just click on <a href="https://prep-tracker.vercel.app/" target="_blank">this</a> link!
