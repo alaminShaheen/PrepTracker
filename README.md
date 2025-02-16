@@ -1,6 +1,6 @@
 ## PrepTracker
 
-[PrepTracker](https://prep-tracker.vercel.app/) is a full-stack AI accountability app that tracks student progress, sends motivational reminders, and provides
+[PrepTracker](https://prep-tracker.vercel.app/) is a fully responsive full-stack AI accountability app that tracks student progress, sends motivational reminders, and provides
 personalized insights to help CS students stay consistent in their tech interview preparation
 
 ## :pancakes: Technology Stack
@@ -62,19 +62,19 @@ Users can reset their password in case they have forgotten it.
 ### Today's Goals
 
 Users can view all their daily, weekly and one time goals for today
-![Today's goals page]([https://github.com/user-attachments/assets/34e18408-3974-4bf0-8c77-76118d62b927) "Today's goals page")
+![Today's goals page](https://github.com/user-attachments/assets/34e18408-3974-4bf0-8c77-76118d62b927 "Today's goals page")
 
 ### Tomorrow's Goals
 Users can view all their daily, weekly and one time goals for tomorrow
-![Today's goals page]([https://github.com/user-attachments/assets/1a6d85a0-e1d5-4bcc-8a9d-ee24d5e6281f) "Tomorrow's goals page")
+![Today's goals page](https://github.com/user-attachments/assets/1a6d85a0-e1d5-4bcc-8a9d-ee24d5e6281f "Tomorrow's goals page")
 
 ### Next 7 Day's Goals
 Users can view all their daily, weekly and one time goals for the next 7 days
-![Next 7 Day's goals page]([https://github.com/user-attachments/assets/1237c29b-66e7-43ed-922a-93ce830d7741) "Today's goals page")
+![Next 7 Day's goals page](https://github.com/user-attachments/assets/1237c29b-66e7-43ed-922a-93ce830d7741 "Today's goals page")
 
 ### Progress Page
 Users can view a heatmap of their goals for the current year
-![Progress Page]([https://github.com/user-attachments/assets/1ad7d7f2-ccb5-4924-a0ea-e61b5a943f06) "Progress Page")
+![Progress Page](https://github.com/user-attachments/assets/1ad7d7f2-ccb5-4924-a0ea-e61b5a943f06 "Progress Page")
 
 ## :rocket: How to launch
 Just click on <a href="https://prep-tracker.vercel.app/" target="_blank">this</a> link!
