@@ -85,7 +85,7 @@ export const useCreateGoal = (props: UseCreateGoalProps) => {
                     return isDateInBetweenRange(next7StartDate, next7EndDate, date);
                 })
             }
-
+            console.log({ includeInTodayGoals, response });
 
             if (includeInTodayGoals) {
                 queryClient.setQueryData<Goal[], string[], Goal[]>([QUERY_KEYS.FETCH_ACTIVE_GOALS], updateGoals);
