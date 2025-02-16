@@ -28,6 +28,7 @@ async function createGoal(goal: CreateGoalRequestDto, userId: string) {
             for (let i = 0; i < totalDays; i++) {
                 const currentDate = addDays(new Date(startDate), i);
                 const dateString = format(currentDate, APP_CONSTANTS.DATE_FORMAT);
+                console.log(dateString);
                 goalProgress[dateString] = false;
             }
         } else if (goal.goalType === GoalType.WEEKLY) {
