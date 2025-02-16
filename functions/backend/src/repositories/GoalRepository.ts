@@ -156,16 +156,7 @@ async function getActiveGoals(userId: string): Promise<Goal[]> {
     try {
         const goalsTable = getGoalTable();
         const goalsSnapshot = await goalsTable.where("userId", "==", userId).where("status", "==", GoalStatus.ACTIVE).get();
-        if (!goalsSnapshot.empty) {
-            let goal: Goal[] = [];
-            goalsSnapshot.forEach((goalData) => {
-                goal.push(goalData.data());
-            });
-
-            return goal;
-        } else {
-            return [];
-        }
+        return goalsSnapshot.docs.map(doc => doc.data());
     } catch (error) {
         throw error;
     }

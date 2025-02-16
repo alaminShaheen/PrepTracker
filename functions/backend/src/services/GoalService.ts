@@ -21,7 +21,8 @@ async function createGoal(goal: CreateGoalRequestDto, userId: string) {
         const goalProgress: Record<string, boolean> = {};
         const startDate = new Date(goal.startDate), endDate = new Date(goal.endDate);
         if (goal.goalType === GoalType.DAILY) {
-            const totalDays = differenceInCalendarDays(endDate, startDate);
+            // including the start date
+            const totalDays = differenceInCalendarDays(endDate, startDate) + 1;
 
             for (let i = 0; i <= totalDays; i++) {
                 const currentDate = addDays(new Date(startDate), i);
