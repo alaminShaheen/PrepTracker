@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useState } from "react";
-import { BicepsFlexed, Calendar, Calendar1, CalendarDays, Pickaxe, Plus } from "lucide-react";
+import { BicepsFlexed, Calendar, Calendar1, CalendarDays, Plus } from "lucide-react";
 import Link from "next/link";
 import { ROUTES } from "@/constants/Routes";
 import { usePathname } from "next/navigation";

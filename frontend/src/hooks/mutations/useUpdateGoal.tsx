@@ -9,7 +9,6 @@ import { GoalType } from "@/models/enums/GoalType";
 import { addDays, format, parse } from "date-fns";
 import { APP_CONSTANTS } from "@/constants/AppConstants";
 import { isDateInBetweenRange } from "@/lib/utils";
-import { useFetchVisualizations } from "@/hooks/queries/useFetchVisualizations";
 
 type UseUpdateGoalProps = {
     onSuccess?: (response: Goal) => void;
@@ -39,14 +38,14 @@ export const useUpdateGoal = (props: UseUpdateGoalProps) => {
                     return oldGoals.map(oldGoal => {
                         if (oldGoal.id === response.id) return response;
                         return oldGoal;
-                    })
+                    });
                 }
                 return [response];
             }
 
             function deleteUpdatedGoal(oldGoals?: Goal[]) {
                 if (oldGoals) {
-                    return oldGoals.filter(oldGoal => oldGoal.id !== response.id)
+                    return oldGoals.filter(oldGoal => oldGoal.id !== response.id);
                 }
                 return [response];
             }
@@ -59,7 +58,7 @@ export const useUpdateGoal = (props: UseUpdateGoalProps) => {
                     const [weekStartKey, weekEndKey] = dateKey.split(" ");
                     const weekStartDate = parse(weekStartKey, APP_CONSTANTS.DATE_FORMAT, new Date());
                     const weekEndDate = parse(weekEndKey, APP_CONSTANTS.DATE_FORMAT, new Date());
-                    return isDateInBetweenRange(weekStartDate, weekEndDate, new Date())
+                    return isDateInBetweenRange(weekStartDate, weekEndDate, new Date());
                 });
 
                 // check whether to include updated goal in TomorrowGoals
@@ -67,7 +66,7 @@ export const useUpdateGoal = (props: UseUpdateGoalProps) => {
                     const [weekStartKey, weekEndKey] = dateKey.split(" ");
                     const weekStartDate = parse(weekStartKey, APP_CONSTANTS.DATE_FORMAT, new Date());
                     const weekEndDate = parse(weekEndKey, APP_CONSTANTS.DATE_FORMAT, new Date());
-                    return isDateInBetweenRange(weekStartDate, weekEndDate, addDays(new Date(), 1))
+                    return isDateInBetweenRange(weekStartDate, weekEndDate, addDays(new Date(), 1));
                 });
 
                 // check whether to include updated goal in Next7DayGoals
@@ -76,8 +75,8 @@ export const useUpdateGoal = (props: UseUpdateGoalProps) => {
                     const [weekStartKey, weekEndKey] = dateKey.split(" ");
                     const weekStartDate = parse(weekStartKey, APP_CONSTANTS.DATE_FORMAT, new Date());
                     const weekEndDate = parse(weekEndKey, APP_CONSTANTS.DATE_FORMAT, new Date());
-                    return next7Days.find(day => isDateInBetweenRange(weekStartDate, weekEndDate, day))
-                })
+                    return next7Days.find(day => isDateInBetweenRange(weekStartDate, weekEndDate, day));
+                });
             } else {
                 // check whether to include updated goal in TodayGoals
                 includeInTodayGoals = !!Object.keys(response.progress).find(dateKey => dateKey === format(new Date(), APP_CONSTANTS.DATE_FORMAT));
@@ -91,7 +90,7 @@ export const useUpdateGoal = (props: UseUpdateGoalProps) => {
                 includeInNext7DayGoals = !!Object.keys(response.progress).find(dateKey => {
                     const date = parse(dateKey, APP_CONSTANTS.DATE_FORMAT, new Date());
                     return isDateInBetweenRange(next7StartDate, next7EndDate, date);
-                })
+                });
             }
 
             if (includeInTodayGoals) {
@@ -118,7 +117,7 @@ export const useUpdateGoal = (props: UseUpdateGoalProps) => {
                 queryClient.setQueryData<Goal[], string[], Goal[]>([QUERY_KEYS.FETCH_NEXT_7_DAY_GOALS], deleteUpdatedGoal);
             }
 
-            void queryClient.refetchQueries({queryKey: [QUERY_KEYS.FETCH_VISUALIZATIONS]})
+            void queryClient.refetchQueries({ queryKey: [QUERY_KEYS.FETCH_VISUALIZATIONS] });
         },
         onError: () => {
             handleErrors(new Error("There was an error updating the goal"));

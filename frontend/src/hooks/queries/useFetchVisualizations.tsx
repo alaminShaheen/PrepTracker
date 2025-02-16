@@ -2,7 +2,6 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/constants/QueryKeys";
-import { fetchActiveGoals } from "@/services/FetchActiveGoals";
 import { fetchVisualizations } from "@/services/FetchVisualizations";
 
 type UseFetchVisualizationProps = {

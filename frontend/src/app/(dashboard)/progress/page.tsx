@@ -70,8 +70,8 @@ const Progress = () => {
                 transformDayElement={(rect, value) => {
                     // Apply inline styles dynamically
                     const color = getColor(value?.count || 0);
-                    return React.cloneElement(rect as any, {
-                        style: { fill: color, transition: "fill 0.3s ease-in-out" }
+                    return React.cloneElement(rect as React.ReactElement<SVGRectElement>, {
+                        style: { fill: color, transition: "fill 0.3s ease-in-out" } as CSSStyleDeclaration
                     });
                 }}
             />
