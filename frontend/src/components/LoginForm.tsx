@@ -176,12 +176,6 @@ const LoginForm = () => {
                     <FcGoogle />
                     {" "} Google
                 </Button>
-
-                <Button variant="outline" className="mb-4 w-full" onClick={loginWithGithub}
-                        disabled={loading || thirdPartyMutationPending || loginMutationPending}>
-                    <FaGithub />
-                    {" "} Github
-                </Button>
             </div>
             <span className="text-xs text-center">
                 Don&apos;t have an account? <Link href={ROUTES.REGISTER} className="underline decoration-2 decoration-blue-400 text-blue-400">Register</Link>
