@@ -11,6 +11,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
 import { DatePicker } from "@/components/DatetimePicker";
+import { APP_CONSTANTS } from "@/constants/AppConstants";
+import { format } from "date-fns";
 
 type CreateGoalModalProps = {
     onCreateGoal: (data: GoalForm) => void;
@@ -23,19 +25,22 @@ const CreateGoalModal = (props: CreateGoalModalProps) => {
     const form = useForm<GoalForm>({
         resolver: zodResolver(GoalSchema),
         defaultValues: {
-            endDate: new Date(),
-            startDate: new Date(),
+            endDate: new Date().toISOString(),
+            startDate: new Date().toISOString(),
             goalType: GoalType.ONE_TIME,
             name: "",
             description: ""
         }
     });
+    console.log(form.watch());
 
     const onSubmit = useCallback((formData: GoalForm) => {
         onCreateGoal(formData);
     }, [onCreateGoal]);
 
     const goalType = form.watch("goalType");
+    const startDate = new Date(form.watch("startDate"));
+    const endDate = new Date(form.watch("endDate"));
 
     return (
         <TooltipProvider>
@@ -153,10 +158,12 @@ const CreateGoalModal = (props: CreateGoalModalProps) => {
                                     <FormItem className="flex flex-col">
                                         <FormLabel>Start Date</FormLabel>
                                         <FormControl>
-                                            <DatePicker {...field} onChange={(date) => {
-                                                field.onChange(date);
-                                                if (goalType === GoalType.ONE_TIME && date) {
-                                                    form.setValue("endDate", date);
+                                            <DatePicker {...field} value={new Date(field.value)} onChange={(date) => {
+                                                if (date) {
+                                                    field.onChange(date.toISOString());
+                                                    if (goalType === GoalType.ONE_TIME) {
+                                                        form.setValue("endDate", date.toISOString());
+                                                    }
                                                 }
                                             }} />
                                         </FormControl>
@@ -177,7 +184,13 @@ const CreateGoalModal = (props: CreateGoalModalProps) => {
                                         <FormControl>
                                             <DatePicker
                                                 {...field}
-                                                disabledMatcher={form.watch("startDate") ? { before: form.watch("startDate") } : undefined}
+                                                onChange={(date) => {
+                                                    if (date) {
+                                                        field.onChange(date.toISOString());
+                                                    }
+                                                }}
+                                                value={new Date(field.value)}
+                                                disabledMatcher={startDate ? { before: startDate } : undefined}
                                             />
                                         </FormControl>
                                         <FormDescription>

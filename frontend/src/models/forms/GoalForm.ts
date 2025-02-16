@@ -6,11 +6,13 @@ import { compareAsc } from "date-fns";
 
 export const GoalSchema = z.object({
     goalType: z.enum([GoalType.DAILY, GoalType.ONE_TIME, GoalType.WEEKLY]),
-    startDate: z.date(),
+    startDate: z.string(),
     name: z.string().min(1, "Goal name is required"),
     description: z.string().optional(),
-    endDate: z.date()
-}).refine((data) => compareAsc(data.endDate, data.startDate) === 0 || compareAsc(data.endDate, data.startDate) === 1, {
+    endDate: z.string()
+}).refine((data) => {
+    return compareAsc(new Date(data.endDate), new Date(data.startDate)) === 0 || compareAsc(new Date(data.endDate), new Date(data.startDate)) === 1;
+}, {
     message: "End date must be greater than start date",
     path: ["endDate"]
 });
