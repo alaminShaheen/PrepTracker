@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const GoalsSectionSkeleton = () => {
@@ -21,7 +21,7 @@ const GoalsSectionSkeleton = () => {
                                 <Skeleton className="w-2/3 h-3" />
                             </div>
                         </div>
-                    ).map(skeleton => skeleton)}
+                    ).map((skeleton, index) => <Fragment key={index}>{skeleton}</Fragment>)}
                 </div>
 
             </div>

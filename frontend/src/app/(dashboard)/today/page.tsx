@@ -17,7 +17,7 @@ import { Dialog } from "@/components/ui/dialog";
 import EditGoalModal from "@/components/EditGoalModal";
 import { GoalTime } from "@/models/enums/GoalTime";
 
-const Dashboard = () => {
+const Today = () => {
     const [goalToEdit, setGoalToEdit] = useState<GoalModel>();
     const {
         data: activeGoals,
@@ -181,4 +181,4 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+export default Today;

@@ -15,7 +15,7 @@ const OptionsDropdown = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
                 <DropdownMenuItem>
-                    <Link href={ROUTES.DASHBOARD.ROOT} className="flex gap-2 items-center">
+                    <Link href={ROUTES.DASHBOARD.TODAY} className="flex gap-2 items-center">
                         <Calendar1 size={16} /> Today
                     </Link>
                 </DropdownMenuItem>
@@ -25,7 +25,7 @@ const OptionsDropdown = () => {
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                    <Link href={ROUTES.DASHBOARD.NEXT_7_DAYS} className="flex gap-2 items-center">
+                    <Link href={ROUTES.DASHBOARD.NEXT7DAYS} className="flex gap-2 items-center">
                         <CalendarDays size={16} /> Next 7 Days
                     </Link>
                 </DropdownMenuItem>

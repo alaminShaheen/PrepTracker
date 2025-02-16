@@ -4,12 +4,9 @@ export const ROUTES = {
     REGISTER: '/register',
     PASSWORD_RESET: '/passwordReset',
     DASHBOARD: {
-        ROOT: "/dashboard",
-        TOMORROW: `/dashboard/tomorrow`,
-        NEXT_7_DAYS: "/dashboard/next7Days"
+        PROGRESS: "/progress",
+        TODAY: "/today",
+        TOMORROW: `/tomorrow`,
+        NEXT7DAYS: "/next7Days"
     },
-    RESUME: (id: string) => `/resumes/${id}`,
-    CREATE_RESUME: (id: string) => `/resumes/${id}/create`,
-    WORK_EXPERIENCE: 'work-experience'
-
 }

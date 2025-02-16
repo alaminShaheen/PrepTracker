@@ -6,7 +6,7 @@ import { getDatabaseInstance } from "../database";
 import { DATABASE_CONSTANTS } from "@/constants/databaseConstants";
 import { v4 as uuidv4 } from "uuid";
 import { GoalType } from "@/models/enums/GoalType";
-import { addDays, differenceInCalendarDays, format, isAfter, isBefore, min, subDays } from "date-fns";
+import { addDays, differenceInCalendarDays, format, isAfter, isBefore, min, parse, subDays } from "date-fns";
 import { faker } from "@faker-js/faker";
 import { GoalStatus } from "@/models/enums/GoalStatus";
 import { APP_CONSTANTS } from "@/constants/appConstants";
@@ -15,6 +15,9 @@ import { FirebaseUser } from "@/models/Firebase/FirebaseUser";
 import { AuthRepository } from "@/repositories/AuthRepository";
 import { GoalRepository } from "@/repositories/GoalRepository";
 import { VisualizationRepository } from "@/repositories/VisualizationRepository";
+import { HeatmapEntry } from "@/models/HeatmapEntry";
+import { isDateInBetweenRange } from "@/utils/dateUtils";
+import { error } from "@/utils/logging";
 
 
 const firestoreGoalConverter = {
@@ -253,38 +256,68 @@ async function batchUpdateGoals() {
 
 async function test() {
     try {
-        // const batch = databaseInstance.batch();
-        // const visualizationDocRef = databaseInstance.collection(DATABASE_CONSTANTS.VISUALIZATION_TABLE).doc();
-        // const userSnapshots = await AuthRepository.getAllUsers();
-        // const userData = userSnapshots.docs.map(doc => doc.data());
-        // for (const userDatum of userData) {
-        //     const userGoals = await GoalRepository.getAllGoals(userDatum.id);
-        //     for (let userGoal of userGoals) {
-        //         userGoal = { ...userGoal, ...GoalRepository.normalizeDates(userGoal) };
-        //         if ([GoalType.ONE_TIME, GoalType.DAILY].includes(userGoal.goalType)) {
-        //             for (const [dateKey, completed] of Object.entries(userGoal.progress)) {
-        //                 if (!completed) continue;
-        //                 const visualizationTable = VisualizationRepository.getVisualizationTable();
-        //                 const userVisualizationSnapshot = await visualizationTable.where("userId", "==", userDatum.id).where("dateKey", "==", dateKey).get();
-        //                 if (userVisualizationSnapshot.empty) {
-        //                     batch.set()
-        //                 } else {
-        //                     const userVisualizationData = userVisualizationSnapshot.docs[0].data();
-        //                     batch.update(, {
-        //                         ...userVisualizationData,
-        //                         tasksCompleted: userVisualizationData.tasksCompleted + 1
-        //                     });
-        //                 }
-        //             }
-        //             Object.entries(goalSnapshot.data().progress).map(([dateKey, completed]) => {
-        //                 // check if dateKey heatmapEntry exists
-        //
-        //             });
-        //             batch.update(goalSnapshot.id, { ...goalSnapshot.data() });
-        //
-        //         }
-        //     }
-        // }
+        const userSnapshots = await AuthRepository.getAllUsers();
+        const userData = userSnapshots.docs.map(doc => doc.data());
+        for (const userDatum of userData) {
+            const userGoals = await GoalRepository.getActiveGoals(userDatum.id);
+            for (let userGoal of userGoals) {
+                userGoal = { ...userGoal, ...GoalRepository.normalizeDates(userGoal) };
+                if ([GoalType.ONE_TIME, GoalType.DAILY].includes(userGoal.goalType)) {
+                    for (const [dateKey, completed] of Object.entries(userGoal.progress)) {
+                        if (!completed) continue;
+                        const visualizationTable = VisualizationRepository.getVisualizationTable();
+                        const userVisualizationSnapshot = await visualizationTable.where("userId", "==", userDatum.id).where("dateKey", "==", dateKey).get();
+                        if (userVisualizationSnapshot.empty) {
+                            await VisualizationRepository.createVisualization(new HeatmapEntry({
+                                id: uuidv4().toString(),
+                                userId: userDatum.id,
+                                dateKey: dateKey,
+                                tasksCompleted: 1
+                            }));
+                        } else {
+                            const userVisualizationData = userVisualizationSnapshot.docs[0].data();
+                            await userVisualizationSnapshot.docs[0].ref.update({
+                                ...userVisualizationData,
+                                tasksCompleted: userVisualizationData.tasksCompleted + 1
+                            });
+                        }
+                    }
+                } else {
+                    for (const [dateKey, completed] of Object.entries(userGoal.progress)) {
+                        if (!completed) continue;
+                        const [startDate, endDate] = dateKey.split(" ").map(dateKey => parse(dateKey, APP_CONSTANTS.DATE_FORMAT, new Date()));
+                        const randomTimestamp = Math.floor(Math.random() * (endDate.getTime() - startDate.getTime() + 1)) + startDate.getTime();
+                        const randomDate = new Date(randomTimestamp);
+                        console.log(randomDate, userGoal.id);
+                        let randomDateKey = format(randomDate, APP_CONSTANTS.DATE_FORMAT);
+
+                        if (isDateInBetweenRange(startDate, endDate, randomDate)) {
+                            randomDateKey = format(randomDate, APP_CONSTANTS.DATE_FORMAT);
+                        } else {
+                            randomDateKey = format(startDate, APP_CONSTANTS.DATE_FORMAT);
+                        }
+
+                        const visualizationTable = VisualizationRepository.getVisualizationTable();
+                        const userVisualizationSnapshot = await visualizationTable.where("userId", "==", userDatum.id).where("dateKey", "==", randomDateKey).get();
+                        if (userVisualizationSnapshot.empty) {
+                            await VisualizationRepository.createVisualization(new HeatmapEntry({
+                                id: uuidv4().toString(),
+                                userId: userDatum.id,
+                                dateKey: randomDateKey,
+                                tasksCompleted: 1
+                            }));
+                        } else {
+                            const userVisualizationData = userVisualizationSnapshot.docs[0].data();
+                            await userVisualizationSnapshot.docs[0].ref.update({
+                                ...userVisualizationData,
+                                tasksCompleted: userVisualizationData.tasksCompleted + 1
+                            });
+                        }
+                    }
+
+                }
+            }
+        }
     } catch (error) {
         console.error("Error sending emails:", error);
     }

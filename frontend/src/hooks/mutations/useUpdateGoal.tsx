@@ -9,6 +9,7 @@ import { GoalType } from "@/models/enums/GoalType";
 import { addDays, format, parse } from "date-fns";
 import { APP_CONSTANTS } from "@/constants/AppConstants";
 import { isDateInBetweenRange } from "@/lib/utils";
+import { useFetchVisualizations } from "@/hooks/queries/useFetchVisualizations";
 
 type UseUpdateGoalProps = {
     onSuccess?: (response: Goal) => void;
@@ -116,6 +117,8 @@ export const useUpdateGoal = (props: UseUpdateGoalProps) => {
                 // else delete if updated goal has is no longer a next7Day goal
                 queryClient.setQueryData<Goal[], string[], Goal[]>([QUERY_KEYS.FETCH_NEXT_7_DAY_GOALS], deleteUpdatedGoal);
             }
+
+            void queryClient.refetchQueries({queryKey: [QUERY_KEYS.FETCH_VISUALIZATIONS]})
         },
         onError: () => {
             handleErrors(new Error("There was an error updating the goal"));

@@ -54,7 +54,7 @@ const LoginForm = () => {
             }
 
             reset({ email: "", password: "" });
-            router.push(ROUTES.DASHBOARD.ROOT);
+            router.push(ROUTES.DASHBOARD.TODAY);
         } catch (error: unknown) {
             handleErrors<LoginFormModel>(error, setError);
         } finally {
@@ -63,7 +63,7 @@ const LoginForm = () => {
     }, [onUserLogin, reset, router, handleErrors, setError]);
 
     const onThirdPartyLoginSuccess = useCallback(() => {
-        router.push(ROUTES.DASHBOARD.ROOT);
+        router.push(ROUTES.DASHBOARD.TODAY);
     }, [router]);
 
     const { mutate: loginMutate, isPending: loginMutationPending } = useLoginMutation({
