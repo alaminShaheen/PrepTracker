@@ -1,7 +1,7 @@
 ## PrepTracker
 
 [PrepTracker](https://prep-tracker.vercel.app/) is a fully responsive full-stack AI accountability app that tracks student progress, sends motivational reminders, and provides
-personalized insights to help CS students stay consistent in their tech interview preparation
+personalized insights to help CS students stay consistent in their tech interview preparation. I did this [project](https://devpost.com/software/preptracker?ref_content=user-portfolio&ref_feature=in_progress) for the Stanford hackathon - Treehacks 2025. 
 
 ## :pancakes: Technology Stack
 
