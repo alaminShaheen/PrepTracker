@@ -2,13 +2,12 @@
 
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
 import { AxiosResponse } from "axios";
 import React, { useCallback, useState } from "react";
 import { Eye, EyeOff, Lock, Mail, RefreshCcw } from "lucide-react";
-import { GithubAuthProvider, GoogleAuthProvider, signInWithCustomToken, signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, signInWithCustomToken, signInWithPopup } from "firebase/auth";
 
 import { cn } from "@/lib/utils";
 import { auth } from "@/firebaseConfig";
@@ -93,20 +92,6 @@ const LoginForm = () => {
         }
     }, [handleErrors, onUserLogin, setError, thirdPartyMutate]);
 
-    const loginWithGithub = useCallback(async () => {
-        try {
-            setLoading(true);
-            const provider = new GithubAuthProvider();
-            const userCredentials = await signInWithPopup(auth, provider);
-            await onUserLogin(userCredentials.user);
-            thirdPartyMutate();
-        } catch (error) {
-            handleErrors<LoginFormModel>(error, setError);
-        } finally {
-            setLoading(false);
-        }
-    }, [onUserLogin, thirdPartyMutate, handleErrors, setError]);
-
     return (
         <form className="w-full p-4 md:w-1/3 lg:w-[450px] flex flex-col gap-y-4" onSubmit={handleSubmit(onSubmit)}>
             <div>
@@ -178,7 +163,8 @@ const LoginForm = () => {
                 </Button>
             </div>
             <span className="text-xs text-center">
-                Don&apos;t have an account? <Link href={ROUTES.REGISTER} className="underline decoration-2 decoration-blue-400 text-blue-400">Register</Link>
+                Don&apos;t have an account? <Link href={ROUTES.REGISTER}
+                                                  className="underline decoration-2 decoration-blue-400 text-blue-400">Register</Link>
             </span>
         </form>
 

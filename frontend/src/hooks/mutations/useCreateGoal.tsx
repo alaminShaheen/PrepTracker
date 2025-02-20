@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
@@ -24,11 +24,7 @@ export const useCreateGoal = (props: UseCreateGoalProps) => {
         mutationFn: async (goalData: CreateGoalRequest) => {
             const response = await createGoal(goalData);
             return {
-                ...response.data,
-                createdAt: new Date(response.data.createdAt),
-                updatedAt: new Date(response.data.updatedAt),
-                startDate: new Date(response.data.startDate),
-                endDate: new Date(response.data.endDate)
+                ...response.data
             } as Goal;
         },
         onSuccess: (response) => {
@@ -51,7 +47,7 @@ export const useCreateGoal = (props: UseCreateGoalProps) => {
                     const [weekStartKey, weekEndKey] = dateKey.split(" ");
                     const weekStartDate = parse(weekStartKey, APP_CONSTANTS.DATE_FORMAT, new Date());
                     const weekEndDate = parse(weekEndKey, APP_CONSTANTS.DATE_FORMAT, new Date());
-                    return isDateInBetweenRange(weekStartDate, weekEndDate, new Date())
+                    return isDateInBetweenRange(weekStartDate, weekEndDate, new Date());
                 });
 
                 // check whether to include newly created goal in TomorrowGoals
@@ -59,7 +55,7 @@ export const useCreateGoal = (props: UseCreateGoalProps) => {
                     const [weekStartKey, weekEndKey] = dateKey.split(" ");
                     const weekStartDate = parse(weekStartKey, APP_CONSTANTS.DATE_FORMAT, new Date());
                     const weekEndDate = parse(weekEndKey, APP_CONSTANTS.DATE_FORMAT, new Date());
-                    return isDateInBetweenRange(weekStartDate, weekEndDate, addDays(new Date(), 1))
+                    return isDateInBetweenRange(weekStartDate, weekEndDate, addDays(new Date(), 1));
                 });
 
                 // check whether to include newly created goal in Next7DayGoals
@@ -68,8 +64,8 @@ export const useCreateGoal = (props: UseCreateGoalProps) => {
                     const [weekStartKey, weekEndKey] = dateKey.split(" ");
                     const weekStartDate = parse(weekStartKey, APP_CONSTANTS.DATE_FORMAT, new Date());
                     const weekEndDate = parse(weekEndKey, APP_CONSTANTS.DATE_FORMAT, new Date());
-                    return next7Days.find(day => isDateInBetweenRange(weekStartDate, weekEndDate, day))
-                })
+                    return next7Days.find(day => isDateInBetweenRange(weekStartDate, weekEndDate, day));
+                });
             } else {
                 // check whether to include newly created goal in TodayGoals
                 includeInTodayGoals = !!Object.keys(response.progress).find(dateKey => dateKey === format(new Date(), APP_CONSTANTS.DATE_FORMAT));
@@ -83,7 +79,7 @@ export const useCreateGoal = (props: UseCreateGoalProps) => {
                 includeInNext7DayGoals = !!Object.keys(response.progress).find(dateKey => {
                     const date = parse(dateKey, APP_CONSTANTS.DATE_FORMAT, new Date());
                     return isDateInBetweenRange(next7StartDate, next7EndDate, date);
-                })
+                });
             }
             console.log({ includeInTodayGoals, response });
 

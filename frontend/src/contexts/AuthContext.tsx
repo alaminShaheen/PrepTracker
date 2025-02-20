@@ -2,7 +2,17 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { onAuthStateChanged, User } from "firebase/auth";
-import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
+import {
+    createContext,
+    Dispatch,
+    ReactNode,
+    SetStateAction,
+    useCallback,
+    useContext,
+    useEffect,
+    useRef,
+    useState
+} from "react";
 
 import { auth } from "@/firebaseConfig";
 import { ROUTES } from "@/constants/Routes";
@@ -13,14 +23,18 @@ type AuthContextType = {
     user: User | null;
     authenticated: boolean;
     onUserLogin: (user: User) => Promise<void>;
+    subscribedToEmails?: boolean;
+    setSubscribedToEmails: Dispatch<SetStateAction<boolean | undefined>>;
 };
 
 const APP_CONTEXT_DEFAULT_VALUES: AuthContextType = {
     appLoading: false,
     user: null,
     authenticated: false,
+    subscribedToEmails: undefined,
     onUserLogin: async () => {
-    }
+    },
+    setSubscribedToEmails: () => {},
 };
 export const AuthContext = createContext<AuthContextType>(APP_CONTEXT_DEFAULT_VALUES);
 
@@ -32,6 +46,7 @@ export const AuthContextProvider = (props: AppContextProviderProps) => {
     const { children } = props;
     const [user, setUser] = useState(APP_CONTEXT_DEFAULT_VALUES.user);
     const [appLoading, setAppLoading] = useState(true);
+    const [subscribedToEmails, setSubscribedToEmails] = useState(APP_CONTEXT_DEFAULT_VALUES.subscribedToEmails);
     const authFetchCountRef = useRef<number>(1);
     const [authenticated, setAuthenticated] = useState(APP_CONTEXT_DEFAULT_VALUES.authenticated);
     const [, setAccessToken] = useState("");
@@ -52,6 +67,9 @@ export const AuthContextProvider = (props: AppContextProviderProps) => {
             setUser(user);
             setAuthenticated(!!user);
             if (user) {
+                const idTokenResult = await user.getIdTokenResult();
+                console.log(idTokenResult.claims);
+                setSubscribedToEmails(idTokenResult.claims.subscribed as boolean || undefined);
                 await onUserLogin(user);
             }
             setAppLoading(authFetchCountRef.current >= 2);
@@ -69,7 +87,9 @@ export const AuthContextProvider = (props: AppContextProviderProps) => {
     return (
         <AuthContext.Provider
             value={{
+                setSubscribedToEmails,
                 user,
+                subscribedToEmails,
                 appLoading,
                 authenticated,
                 onUserLogin

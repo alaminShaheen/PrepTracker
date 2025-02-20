@@ -23,11 +23,7 @@ export const useUpdateGoal = (props: UseUpdateGoalProps) => {
         mutationFn: async (goalData: Goal) => {
             const response = await updateGoal(goalData.id, goalData);
             return {
-                ...response.data,
-                createdAt: new Date(response.data.createdAt),
-                updatedAt: new Date(response.data.updatedAt),
-                startDate: new Date(response.data.startDate),
-                endDate: new Date(response.data.endDate)
+                ...response.data
             } as Goal;
         },
         onSuccess: (response) => {

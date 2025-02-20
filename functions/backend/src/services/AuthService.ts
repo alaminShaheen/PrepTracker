@@ -91,7 +91,6 @@ async function register(userInfo: RegisterUserDto) {
 async function registerOAuthUser(firebaseUser: FirebaseUser) {
     try {
         const user = await AuthRepository.getUser(firebaseUser.uid);
-
         const newUser = {
             email: firebaseUser.email || "",
             firstname: firebaseUser.displayName?.split(" ")[0] || (firebaseUser as any).name?.split(" ")[0] || "",
@@ -100,6 +99,8 @@ async function registerOAuthUser(firebaseUser: FirebaseUser) {
             createdAt: new Date(),
             subscribed: true,
         };
+
+        await firebaseAdminAuth().setCustomUserClaims(firebaseUser.uid, { subscribed: user?.subscribed || true });
 
         if (!user) {
             return await AuthRepository.createUser(newUser);
@@ -140,13 +141,27 @@ async function resetPassword(resetInfo: ResetPasswordRequestDto) {
     }
 }
 
-async function unsubscribeEmail(email: string) {
+async function subscribeEmail(email: string) {
     try {
-        const newUser = AuthRepository.unsubscribeUserEmail(email);
+        const newUser = await AuthRepository.updateUserEmailSubscription(email, true);
         if (!newUser) {
             throw new AppError(400, "Email not found");
         }
-        return newUser;
+        await firebaseAdminAuth().setCustomUserClaims(newUser.data().id, { subscribed: true });
+        return { subscriptionStatus: true };
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function unsubscribeEmail(email: string) {
+    try {
+        const newUser = await AuthRepository.updateUserEmailSubscription(email, false)
+        if (!newUser) {
+            throw new AppError(400, "Email not found");
+        }
+        await firebaseAdminAuth().setCustomUserClaims(newUser.data().id, { subscribed: false });
+        return { subscriptionStatus: false };
     } catch (error) {
         throw error;
     }
@@ -158,5 +173,6 @@ export const AuthService = {
     register,
     resetPassword,
     unsubscribeEmail,
+    subscribeEmail,
     registerOAuthUser,
 };

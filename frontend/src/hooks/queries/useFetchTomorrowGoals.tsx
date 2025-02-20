@@ -16,15 +16,7 @@ export const useFetchTomorrowGoals = (props: UseFetchTomorrowGoalProps) => {
             queryKey: [QUERY_KEYS.FETCH_TOMORROW_GOALS],
             queryFn: async () => {
                 const response = await fetchTomorrowGoals();
-                return response.data.map(goal => {
-                    return {
-                        ...goal,
-                        createdAt: new Date(goal.createdAt),
-                        updatedAt: new Date(goal.updatedAt),
-                        startDate: new Date(goal.startDate),
-                        endDate: new Date(goal.endDate)
-                    };
-                });
+                return response.data;
             },
             enabled
         }

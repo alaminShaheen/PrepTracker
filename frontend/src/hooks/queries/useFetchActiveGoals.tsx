@@ -16,15 +16,7 @@ export const useFetchActiveGoals = (props: UseFetchActiveGoalsProps) => {
             queryKey: [QUERY_KEYS.FETCH_ACTIVE_GOALS],
             queryFn: async () => {
                 const response = await fetchActiveGoals();
-                return response.data.map(goal => {
-                    return {
-                        ...goal,
-                        createdAt: new Date(goal.createdAt),
-                        updatedAt: new Date(goal.updatedAt),
-                        startDate: new Date(goal.startDate),
-                        endDate: new Date(goal.endDate)
-                    };
-                });
+                return response.data;
             },
             enabled
         }

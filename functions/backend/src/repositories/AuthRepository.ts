@@ -95,14 +95,14 @@ async function updateUser(updatedUserInfo: User) {
     }
 }
 
-async function unsubscribeUserEmail(email: string) {
+async function updateUserEmailSubscription(email: string, shouldSubscribe: boolean) {
     try {
         const usersTable = getUserTable();
         const userSnapshot = await usersTable.where("email", "==", email).get();
 
         if (!userSnapshot.empty) {
             const userDoc = userSnapshot.docs[0]
-            await userDoc.ref.update({...userDoc.data(), subscribed: false});
+            await userDoc.ref.update({...userDoc.data(), subscribed: shouldSubscribe});
             return await findUserRecord(userDoc.data().id);
         } else {
             return null;
@@ -117,5 +117,5 @@ export const AuthRepository = {
     getUser,
     updateUser,
     getAllUsers,
-    unsubscribeUserEmail
+    updateUserEmailSubscription
 };

@@ -47,12 +47,30 @@ async function registerPasswordReset(request: Request<{}, {}, RegisterUserDto>, 
     }
 }
 
-async function unsubscribeEmailSubscription(request: Request<{}, {}, {}, {email: string}>, response: Response, next: NextFunction) {
+async function unsubscribeEmailSubscription(request: Request<{}, {}, {}, {email: string, redirect?: string}>, response: Response, next: NextFunction) {
     try {
         handleFormValidationErrors(request);
         const decodedEmail = decodeURIComponent(request.query.email);
-        await AuthService.unsubscribeEmail(decodedEmail);
-        response.redirect(`/api/auth/unsubscribe-success?email=${encodeURIComponent(decodedEmail)}`);
+        const result = await AuthService.unsubscribeEmail(decodedEmail);
+
+        if (Boolean(request.query.redirect)) {
+            response.redirect(`/api/auth/unsubscribe-success?email=${encodeURIComponent(decodedEmail)}`);
+        } else {
+            response.status(200).json(result);
+        }
+        return;
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function subscribeEmailSubscription(request: Request<{}, {}, {}, {email: string}>, response: Response, next: NextFunction) {
+    try {
+        handleFormValidationErrors(request);
+        const decodedEmail = decodeURIComponent(request.query.email);
+        const result = await AuthService.subscribeEmail(decodedEmail);
+        response.status(200).json(result);
+        return;
     } catch (error) {
         next(error);
     }
@@ -64,7 +82,6 @@ async function unsubscribeSuccess(request: Request<{}, {}, {}, { email: string }
     } catch (error) {
         next(error);
     }
-
 }
 
 export const AuthController = {
@@ -73,5 +90,6 @@ export const AuthController = {
     registerPasswordReset,
     registerOAuthHandler,
     unsubscribeEmailSubscription,
-    unsubscribeSuccess
+    unsubscribeSuccess,
+    subscribeEmailSubscription
 };

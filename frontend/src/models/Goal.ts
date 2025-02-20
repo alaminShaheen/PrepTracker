@@ -7,10 +7,10 @@ export type Goal = {
     name: string;
     description?: string;
     goalType: GoalType;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
     status: GoalStatus;
     progress: Record<string, boolean>;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
 }

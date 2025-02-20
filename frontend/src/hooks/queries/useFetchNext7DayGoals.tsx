@@ -16,15 +16,7 @@ export const useFetchNext7DayGoals = (props: UseFetchNext7DayGoalsProps) => {
             queryKey: [QUERY_KEYS.FETCH_NEXT_7_DAY_GOALS],
             queryFn: async () => {
                 const response = await fetchNext7DayGoals();
-                return response.data.map(goal => {
-                    return {
-                        ...goal,
-                        createdAt: new Date(goal.createdAt),
-                        updatedAt: new Date(goal.updatedAt),
-                        startDate: new Date(goal.startDate),
-                        endDate: new Date(goal.endDate)
-                    };
-                });
+                return response.data;
             },
             enabled
         }

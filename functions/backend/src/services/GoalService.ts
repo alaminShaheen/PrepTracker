@@ -339,7 +339,7 @@ async function createEmailTemplate(user: User, dailyGoals: Goal[], weeklyGoals: 
 
             <p>Stay productive! 🚀</p>
             <div class="footer">
-                <p><a href="${SERVER_URL}/api/auth/unsubscribe?email=${encodeURIComponent(user.email)}">Unsubscribe</a> | <a href="${CLIENT_ORIGIN}/dashboard">Visit Dashboard</a></p>
+                <p><a href="${SERVER_URL}/api/auth/unsubscribe?email=${encodeURIComponent(user.email)}&redirect=true">Unsubscribe</a> | <a href="${CLIENT_ORIGIN}/dashboard">Visit Dashboard</a></p>
             </div>
         </div>
     </body>
