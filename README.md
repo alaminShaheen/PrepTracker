@@ -19,6 +19,8 @@ personalized insights to help CS students stay consistent in their tech intervie
   - [Firebase Storage](https://firebase.google.com/products/storage)
   - [Firebase Auth](https://firebase.google.com/products/auth)
   - [Firebase Functions](https://firebase.google.com/products/functions)
+  - SendGrid
+  - Twilio
 
 ## :star: Inspiration
 As I approach my graduation on May, 2025, I realized I needed to brush up on my skills for upcoming tech interviews. 
