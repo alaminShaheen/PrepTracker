@@ -68,25 +68,27 @@ const Navbar = () => {
                 </h1>
             </div>
             <div className="flex items-center gap-x-1 md:gap-x-2">
-                <Button variant="ghost" size="icon" onClick={onUpdateSubscription}
-                        title={
-                            subscribedToEmails === undefined ?
-                                "Pending subscription for email notifications"
-                                : subscribedToEmails ?
-                                    "Unsubscribe to email notifications"
-                                    : "Subscribe to email notifications"
-                        }>
-                    {subscribedToEmails === undefined ?
-                        <MailQuestion className="text-yellow-400" /> : subscribedToEmails ?
-                            <MailX className="text-destructive" /> :
-                            <MailCheck className="text-green-600" />}
-                </Button>
+                {
+                    authenticated &&
+                    <Button variant="ghost" size="icon" onClick={onUpdateSubscription}
+                            title={
+                                subscribedToEmails === undefined ?
+                                    "Pending subscription for email notifications"
+                                    : subscribedToEmails ?
+                                        "Unsubscribe to email notifications"
+                                        : "Subscribe to email notifications"
+                            }>
+                        {subscribedToEmails === undefined ?
+                            <MailQuestion className="text-yellow-400" /> : subscribedToEmails ?
+                                <MailX className="text-destructive" /> :
+                                <MailCheck className="text-green-600" />}
+                    </Button>
+                }
                 <Button variant="ghost" size="icon" onClick={onThemeChange}
                         title={resolvedTheme === "dark" ? "Toggle dark mode" : "Toggle light mode"}>
                     {resolvedTheme === "dark" ? <Sun /> : <Moon />}
                 </Button>
-                <OptionsDropdown />
-
+                {authenticated && <OptionsDropdown />}
                 <div className="flex items-center gap-x-4">
                     {!authenticated && (
                         <Link href={pathname === ROUTES.LOGIN ? ROUTES.REGISTER : ROUTES.LOGIN}>

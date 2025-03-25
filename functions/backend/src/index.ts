@@ -62,7 +62,7 @@ exports.scheduler = firebaseV2Functions.scheduler.onSchedule("every day 00:00", 
             await GoalService.cleanExpiredGoals(userDatum.id);
             if (userDatum.subscribed) {
                 const result = await GoalService.getUserEmailGoals(userDatum);
-                if (result) {
+                if (result.activeOneTimeGoals.length > 0 || result.activeWeeklyGoals.length > 0 || result.activeTodayGoals.length > 0) {
                     const email = await GoalService.createEmailTemplate(userDatum, result.activeTodayGoals, result.activeWeeklyGoals, result.activeOneTimeGoals);
                     await sgMail.send({
                         to: userDatum.email,
